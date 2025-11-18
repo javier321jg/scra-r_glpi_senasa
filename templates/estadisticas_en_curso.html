@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SENASA - Tickets en Curso</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .custom-row:hover {
+            background-color: #f0f7ff;
+            transition: all 0.3s ease;
+        }
+        
+        .logo-glow {
+            filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.5));
+        }
+        
+        .logo-shine {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                45deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.1) 45%,
+                rgba(255, 255, 255, 0.4) 50%,
+                rgba(255, 255, 255, 0.1) 55%,
+                transparent 100%
+            );
+            background-size: 200% 200%;
+            animation: shine 3s infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes shine {
+            0% { background-position: -200% -200%; }
+            100% { background-position: 200% 200%; }
+        }
+        
+        table {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        th, td {
+            border: 1px solid #e5e7eb;
+        }
+        
+        th {
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        thead th {
+            background: linear-gradient(to right, #1e3a8a, #1e40af);
+            color: white;
+            padding: 14px 16px;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
+        
+        tbody td {
+            padding: 12px 16px;
+        }
+        
+        tfoot td {
+            background: linear-gradient(to right, #1e3a8a, #1e40af);
+            color: white;
+            padding: 14px 16px;
+            font-weight: 600;
+        }
+        
+        .ticket-count {
+            padding: 6px 12px;
+            border-radius: 9999px;
+            font-weight: 600;
+            display: inline-block;
+            min-width: 40px;
+            text-align: center;
+        }
+        
+        .header-container {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        }
+
+        /* Optimize for email display */
+        @media only screen and (max-width: 600px) {
+            .container {
+                width: 100% !important;
+                padding: 10px !important;
+            }
+            
+            table {
+                font-size: 12px;
+            }
+            
+            .header-container {
+                padding: 10px !important;
+            }
+        }
+        
+        /* Estilos para el panel de debug */
+        .debug-panel {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            width: 300px;
+            max-height: 200px;
+            overflow-y: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #00ff00;
+            font-family: monospace;
+            padding: 10px;
+            border-top-left-radius: 8px;
+            z-index: 1000;
+            font-size: 12px;
+        }
+        
+        .debug-panel p {
+            margin: 2px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Nuevos estilos para agrupar tickets */
+        .ticket-group {
+            margin-bottom: 15px;
+        }
+        
+        .ticket-group-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #1e3a8a;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 3px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="header-container text-white p-6 shadow-lg">
+        <div class="container mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <div class="logo-container relative w-16 h-16">
+                    <img src="https://www.gob.pe/rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MTQ1MDAsInB1ciI6ImJsb2JfaWQifX0=--d56e8d89845af7a460ccbe0d65ed319826301586/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJwbmciLCJyZXNpemVfdG9fbGltaXQiOltudWxsLDQ4XX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--830247c4bafe7cadca50817d8559bf1a09e3aa28/Sin%20ti%CC%81tulo-1-01%20(1).png" 
+                         alt="SENASA Logo" 
+                         class="logo-glow w-full h-full object-contain bg-white p-1 rounded-full">
+                    <div class="logo-shine"></div>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-bold tracking-tight">Tickets en Curso</h1>
+                    <p class="text-blue-100 text-sm">Sistema Nacional de Sanidad Agraria</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <div class="bg-white text-blue-800 px-4 py-2 rounded-lg shadow-md flex items-center">
+                    <i class="fas fa-ticket-alt mr-2"></i>
+                    Total: <span id="totalTickets" class="font-bold">0</span>
+                </div>
+                <button id="jpgBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-md shadow-md flex items-center transition duration-300 ease-in-out">
+                    <i class="fas fa-camera mr-2"></i> Capturar
+                </button>
+                <button id="emailBtn" class="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md shadow-md flex items-center transition duration-300 ease-in-out">
+                    <i class="fas fa-envelope mr-2"></i> Enviar Imagen
+                </button>
+                <button id="sendHtmlBtn" class="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md shadow-md flex items-center transition duration-300 ease-in-out">
+                    <i class="fas fa-paper-plane mr-2"></i> Enviar HTML
+                </button>
+                <button id="refreshBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-md shadow-md flex items-center transition duration-300 ease-in-out">
+                    <i class="fas fa-sync-alt mr-2"></i> Actualizar
+                </button>
+                <div id="lastUpdateContainer" class="bg-gray-700 text-white px-3 py-2 rounded-md shadow-md flex items-center">
+                    <i class="fas fa-clock mr-2"></i>
+                    <span id="lastUpdate">Actualizado: --</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Tabla de Técnicos -->
+    <div class="container mx-auto mt-8 px-4 mb-12">
+        <div class="bg-white rounded-xl shadow-xl overflow-hidden border border-gray-200">
+            <div class="bg-gradient-to-r from-blue-900 to-blue-700 text-white p-5 flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-users-cog text-2xl text-blue-200"></i>
+                    <h2 class="text-xl font-semibold">Tickets en Curso por Técnico</h2>
+                </div>
+                <div>
+                    <span id="fecha-reporte" class="text-sm bg-blue-800 px-3 py-1 rounded-full">
+                        <i class="fas fa-calendar-alt mr-1"></i>
+                        Fecha: <span id="current-date"></span>
+                    </span>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full" id="technicianTable">
+                    <thead>
+                        <tr>
+                            <!-- Columnas dinámicas generadas por JS -->
+                        </tr>
+                    </thead>
+                    <tbody id="technicianTableBody">
+                        <!-- Contenido dinámico -->
+                    </tbody>
+                    <tfoot>
+                        <!-- Totales dinámicos generados por JS -->
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Panel de depuración -->
+    <div id="debugPanel" class="debug-panel">
+        <h4>Debug Panel</h4>
+        <div id="debugLogs"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+        // Variables globales
+        let allTickets = [];
+        
+        // Función de depuración
+        function debug(message, data) {
+            const debugLogs = document.getElementById('debugLogs');
+            const msg = document.createElement('p');
+            
+            let text = message;
+            
+            if (data) {
+                if (typeof data === 'object') {
+                    try {
+                        text += ': ' + JSON.stringify(data).substring(0, 50) + '...';
+                    } catch (e) {
+                        text += ': [Object]';
+                    }
+                } else {
+                    text += ': ' + data;
+                }
+            }
+            
+            msg.textContent = new Date().toLocaleTimeString() + ' - ' + text;
+            debugLogs.appendChild(msg);
+            
+            // Limitar a 20 mensajes
+            if (debugLogs.children.length > 20) {
+                debugLogs.removeChild(debugLogs.children[0]);
+            }
+            
+            // Auto-scroll
+            debugLogs.scrollTop = debugLogs.scrollHeight;
+            
+            // También log en consola
+            console.log(message, data);
+        }
+
+        // Mostrar fecha actual
+        document.addEventListener('DOMContentLoaded', function() {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('current-date').textContent = new Date().toLocaleDateString('es-ES', options);
+            
+            // Cargar tickets
+            loadTickets();
+        });
+        
+        // Función para cargar tickets
+        function loadTickets() {
+            debug('Cargando tickets...');
+            
+            // Cargar tickets directamente de la base de datos
+            fetch('/api/tickets?tipo=en_curso')
+                .then(response => response.json())
+                .then(data => {
+                    debug('Datos recibidos', data);
+                    
+                    if (!data.tickets || data.tickets.length === 0) {
+                        debug('No se encontraron tickets');
+                        document.getElementById('totalTickets').textContent = '0';
+                        document.getElementById('lastUpdate').textContent = 'Sin tickets';
+                        return;
+                    }
+                    
+                    // IMPORTANTE: Mostrar todos los tickets sin filtrado adicional
+                    // Ya están filtrados por la base de datos al estar en la tabla tickets_curso
+                    const allTickets = data.tickets;
+                    
+                    // Mostrar estados disponibles para depuración
+                    const estados = [...new Set(data.tickets.map(t => t.Estado || t.estado))];
+                    debug('Estados disponibles', estados);
+                    
+                    // Mostrar información sobre campos en los tickets
+                    const sampleTicket = data.tickets[0];
+                    debug('Ejemplo de ticket', sampleTicket);
+                    
+                    // Verificar campos disponibles
+                    const campos = Object.keys(sampleTicket).join(', ');
+                    debug('Campos disponibles', campos);
+                    
+                    debug(`Total de tickets en curso: ${allTickets.length}`);
+                    
+                    // Actualizar el dashboard
+                    document.getElementById('totalTickets').textContent = allTickets.length;
+                    
+                    // Actualizar la tabla
+                    updateTechnicianTable(allTickets);
+
+                    // Mostrar la última actualización
+                    if (data.last_update) {
+                        document.getElementById('lastUpdate').textContent = `Actualizado: ${data.last_update}`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al cargar tickets:', error);
+                    debug('Error al cargar tickets', error.message);
+                    document.getElementById('lastUpdate').textContent = 'Error al cargar datos';
+                });
+        }
+
+        // Función para capturar la tabla como JPG
+        function captureTableAsJPG() {
+            // Seleccionar el contenedor de la tabla
+            const table = document.querySelector('.container');
+            
+            // Usar html2canvas para convertir a canvas
+            return html2canvas(table, {
+                scale: 2, // Mayor calidad
+                logging: true,
+                useCORS: true,
+                backgroundColor: "#F9FAFB" // Color de fondo gris claro
+            }).then(canvas => {
+                // Convertir canvas a imagen JPG
+                return canvas.toDataURL('image/jpeg', 0.9);
+            });
+        }
+        
+        // Función para descargar la imagen localmente
+        function downloadImage(dataUrl, filename) {
+            const link = document.createElement('a');
+            link.href = dataUrl;
+            link.download = filename || 'tickets-report.jpg';
+            link.click();
+        }
+        
+        // Función para enviar la imagen al servidor
+        function sendImageToServer(dataUrl) {
+            // Quitar el prefijo del Data URL para obtener solo los datos base64
+            const base64Data = dataUrl.split(',')[1];
+            
+            // En el HTML/JS:
+            fetch('/api/send-email-screenshot', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    image: base64Data,
+                    filename: `tickets-report-${new Date().toISOString().slice(0,10)}.jpg`
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message || 'Correo enviado con éxito');
+            })
+            .catch(error => {
+                console.error('Error al enviar correo:', error);
+                alert('Error al enviar el correo');
+            });
+        }
+
+        // Función para parsear fechas
+        function parseDate(dateStr) {
+            if (!dateStr) return new Date();
+            
+            try {
+                // Intentar diferentes formatos de fecha
+                // Formato DD-MM-YYYY
+                if (dateStr.includes('-')) {
+                    const [datePart, timePart] = dateStr.split(' ');
+                    const [day, month, year] = datePart.split('-').map(Number);
+                    const [hour, minute] = timePart ? timePart.split(':').map(Number) : [0, 0];
+                    return new Date(year, month - 1, day, hour, minute);
+                }
+                // Formato DD/MM/YYYY
+                else if (dateStr.includes('/')) {
+                    const [datePart, timePart] = dateStr.split(' ');
+                    const [day, month, year] = datePart.split('/').map(Number);
+                    const [hour, minute] = timePart ? timePart.split(':').map(Number) : [0, 0];
+                    return new Date(year, month - 1, day, hour, minute);
+                }
+                // Formato ISO
+                else if (dateStr.includes('T') || dateStr.includes('Z')) {
+                    return new Date(dateStr);
+                }
+                // Otros formatos
+                else {
+                    return new Date(dateStr);
+                }
+            } catch (error) {
+                debug('Error al parsear fecha', `${dateStr}: ${error.message}`);
+                return new Date();
+            }
+        }
+
+        // Función para formatear meses
+        function formatMonth(monthYear) {
+            const [month, year] = monthYear.split('-');
+            const months = {
+                '01': 'Enero', '02': 'Febrero', '03': 'Marzo',
+                '04': 'Abril', '05': 'Mayo', '06': 'Junio',
+                '07': 'Julio', '08': 'Agosto', '09': 'Septiembre',
+                '10': 'Octubre', '11': 'Noviembre', '12': 'Diciembre'
+            };
+            return `${months[month]} ${year}`;
+        }
+
+        // Función para actualizar la tabla de técnicos
+        function updateTechnicianTable(tickets) {
+            debug('Actualizando tabla con tickets', tickets.length);
+            
+            // 1) Obtener todos los meses únicos
+            const monthsSet = new Set();
+            
+            // Contar cuántos tickets tienen fecha de apertura
+            let ticketsConFecha = 0;
+            
+            tickets.forEach(ticket => {
+                try {
+                    // Intentar diferentes campos de fecha
+                    let fechaValida = null;
+                    
+                    // Comprobar varias posibilidades de nombres de campo para fecha
+                    const posiblesFechas = [
+                        ticket.Fecha_apertura,
+                        ticket.fecha_apertura,
+                        ticket.ultima_modificacion,
+                        ticket.Ultima_modificacion,
+                        ticket.fecha_registro
+                    ];
+                    
+                    for (const fecha of posiblesFechas) {
+                        if (fecha && fecha.trim() !== '') {
+                            try {
+                                const fechaParsed = parseDate(fecha);
+                                if (fechaParsed && !isNaN(fechaParsed.getTime())) {
+                                    fechaValida = fechaParsed;
+                                    ticketsConFecha++;
+                                    break;
+                                }
+                            } catch (e) {
+                                // Continuar con el siguiente campo
+                            }
+                        }
+                    }
+                    
+                    // Si encontramos una fecha válida, añadir el mes a los meses únicos
+                    if (fechaValida) {
+                        const monthYear = `${(fechaValida.getMonth() + 1).toString().padStart(2, '0')}-${fechaValida.getFullYear()}`;
+                        monthsSet.add(monthYear);
+                    } else {
+                        // Si no encontramos fecha, usar el mes actual
+                        const ahora = new Date();
+                        const currentMonth = `${(ahora.getMonth() + 1).toString().padStart(2, '0')}-${ahora.getFullYear()}`;
+                        monthsSet.add(currentMonth);
+                    }
+                } catch (error) {
+                    debug('Error con fecha de apertura', `Ticket ID ${ticket.id || ticket.ID || 'N/A'}: ${error.message}`);
+                }
+            });
+            
+            debug(`Tickets con fecha válida: ${ticketsConFecha} de ${tickets.length}`);
+
+            // Ordenar meses (más reciente primero)
+            const allMonths = Array.from(monthsSet).sort((a, b) => {
+                const [m1, y1] = a.split('-').map(Number);
+                const [m2, y2] = b.split('-').map(Number);
+                return new Date(y2, m2 - 1) - new Date(y1, m1 - 1);
+            });
+            
+            debug('Meses encontrados', allMonths);
+
+            // Estructuras para contar tickets por técnico y mes
+            const technicianData = {};
+            const monthTotals = {};
+            let grandTotal = 0;
+
+            tickets.forEach(ticket => {
+                try {
+                    // Buscar valor de técnico en varios posibles campos
+                    let tecnico = 'Sin asignar';
+                    
+                    // Comprobar varias posibilidades de nombres de campo
+                    const posiblesAsignados = [
+                        ticket.Asignado_a,
+                        ticket.asignado_a,
+                        ticket.Asignado,
+                        ticket.asignado,
+                        ticket.responsable,
+                        ticket.Responsable,
+                        ticket.tecnico,
+                        ticket.Tecnico
+                    ];
+                    
+                    for (const asignado of posiblesAsignados) {
+                        if (asignado && typeof asignado === 'string' && asignado.trim() !== '') {
+                            tecnico = asignado.trim();
+                            break;
+                        }
+                    }
+                    
+                    // Buscar fecha válida
+                    let fechaApertura = new Date();
+                    const posiblesFechas = [
+                        ticket.Fecha_apertura,
+                        ticket.fecha_apertura,
+                        ticket.ultima_modificacion,
+                        ticket.Ultima_modificacion,
+                        ticket.fecha_registro
+                    ];
+                    
+                    for (const fecha of posiblesFechas) {
+                        if (fecha && fecha.trim() !== '') {
+                            try {
+                                const fechaParsed = parseDate(fecha);
+                                if (fechaParsed && !isNaN(fechaParsed.getTime())) {
+                                    fechaApertura = fechaParsed;
+                                    break;
+                                }
+                            } catch (e) {
+                                // Continuar con el siguiente campo
+                            }
+                        }
+                    }
+                    
+                    const monthYear = `${(fechaApertura.getMonth() + 1).toString().padStart(2, '0')}-${fechaApertura.getFullYear()}`;
+
+                    // Inicializar datos del técnico si no existen
+                    if (!technicianData[tecnico]) {
+                        technicianData[tecnico] = { months: {}, total: 0 };
+                        allMonths.forEach(m => {
+                            technicianData[tecnico].months[m] = 0;
+                        });
+                    }
+                    
+                    // Inicializar totales del mes si no existen
+                    if (!monthTotals[monthYear]) {
+                        monthTotals[monthYear] = 0;
+                    }
+
+                    // Contar
+                    technicianData[tecnico].months[monthYear]++;
+                    technicianData[tecnico].total++;
+                    monthTotals[monthYear]++;
+                    grandTotal++;
+                } catch (error) {
+                    debug('Error al procesar ticket', `ID ${ticket.id || ticket.ID || 'N/A'}: ${error.message}`);
+                }
+            });
+            
+            debug('Técnicos procesados', Object.keys(technicianData).length);
+
+            // 2) Llenar THEAD
+            const headerRow = document.querySelector('#technicianTable thead tr');
+            headerRow.innerHTML = `
+                <th class="px-6 py-3 text-left">
+                    <div class="flex items-center">
+                        <i class="fas fa-user-shield mr-2"></i>
+                        TÉCNICO
+                    </div>
+                </th>
+                ${allMonths.map(month => `
+                    <th class="px-6 py-3 text-center">
+                        <div class="flex flex-col items-center">
+                            <i class="fas fa-calendar-alt mb-1"></i>
+                            <span>${formatMonth(month)}</span>
+                        </div>
+                    </th>
+                `).join('')}
+                <th class="px-6 py-3 text-center">
+                    <div class="flex flex-col items-center">
+                        <i class="fas fa-chart-bar mb-1"></i>
+                        <span>TOTAL</span>
+                    </div>
+                </th>
+            `;
+
+            // 3) Llenar TBODY
+            const tbody = document.getElementById('technicianTableBody');
+            tbody.innerHTML = '';
+            
+            // Ordenar técnicos por total de tickets (mayor a menor)
+            const sortedTechnicians = Object.entries(technicianData).sort((a, b) => b[1].total - a[1].total);
+            
+            sortedTechnicians.forEach(([tecnico, data]) => {
+                const tr = document.createElement('tr');
+                tr.className = 'custom-row';
+
+                let rowHTML = `
+                    <td class="px-6 py-4">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                                <i class="fas fa-user text-blue-600"></i>
+                            </div>
+                            <div class="ml-3">
+                                <div class="text-sm font-medium text-gray-900">${tecnico}</div>
+                            </div>
+                        </div>
+                    </td>
+                `;
+                
+                allMonths.forEach(month => {
+                    const count = data.months[month] || 0;
+                    let bgColor, textColor;
+                    
+                    if (count === 0) {
+                        bgColor = 'bg-gray-100';
+                        textColor = 'text-gray-500';
+                    } else if (count < 3) {
+                        bgColor = 'bg-green-100';
+                        textColor = 'text-green-700';
+                    } else if (count < 6) {
+                        bgColor = 'bg-blue-100';
+                        textColor = 'text-blue-700';
+                    } else if (count < 10) {
+                        bgColor = 'bg-yellow-100';
+                        textColor = 'text-yellow-700';
+                    } else {
+                        bgColor = 'bg-red-100';
+                        textColor = 'text-red-700';
+                    }
+                    
+                    rowHTML += `
+                        <td class="px-6 py-4 text-center">
+                            <span class="ticket-count ${bgColor} ${textColor}">
+                                ${count}
+                            </span>
+                        </td>
+                    `;
+                });
+                
+                rowHTML += `
+                    <td class="px-6 py-4 text-center">
+                        <span class="ticket-count bg-blue-600 text-white">
+                            ${data.total}
+                        </span>
+                    </td>
+                `;
+
+                tr.innerHTML = rowHTML;
+                tbody.appendChild(tr);
+            });
+
+            // 4) Llenar TFOOT
+            const tfoot = document.createElement('tfoot');
+            const monthTotalsRow = allMonths.map(month => `
+                <td class="px-6 py-3 text-center font-semibold">${monthTotals[month] || 0}</td>
+            `).join('');
+
+            tfoot.innerHTML = `
+                <tr>
+                    <td class="px-6 py-3 font-semibold">
+                        <div class="flex items-center">
+                            <i class="fas fa-calculator mr-2"></i>
+                            Total General
+                        </div>
+                    </td>
+                    ${monthTotalsRow}
+                    <td class="px-6 py-3 text-center font-semibold">${grandTotal}</td>
+                </tr>
+            `;
+            
+            const existingTfoot = document.querySelector('#technicianTable tfoot');
+            if (existingTfoot) {
+                existingTfoot.replaceWith(tfoot);
+            } else {
+                document.getElementById('technicianTable').appendChild(tfoot);
+            }
+            
+            debug('Tabla actualizada');
+        }
+
+        // Eventos de botones
+        document.getElementById('jpgBtn').addEventListener('click', async () => {
+            try {
+                debug('Capturando como JPG...');
+                const dataUrl = await captureTableAsJPG();
+                downloadImage(dataUrl, `tickets-report-${new Date().toISOString().slice(0,10)}.jpg`);
+                debug('Captura completada');
+            } catch (error) {
+                console.error('Error al capturar imagen:', error);
+                debug('Error al capturar imagen', error.message);
+                alert('Error al generar la imagen');
+            }
+        });
+        
+        document.getElementById('emailBtn').addEventListener('click', async () => {
+            try {
+                debug('Enviando imagen por email...');
+                const dataUrl = await captureTableAsJPG();
+                sendImageToServer(dataUrl);
+            } catch (error) {
+                console.error('Error al capturar imagen:', error);
+                debug('Error al enviar imagen', error.message);
+                alert('Error al generar la imagen');
+            }
+        });
+
+        // Botón de actualización
+        document.getElementById('refreshBtn').addEventListener('click', function() {
+            debug('Actualizando datos manualmente...');
+            loadTickets();
+        });
+
+        // Botón para enviar reporte HTML
+        document.getElementById('sendHtmlBtn').addEventListener('click', function() {
+            if (confirm('¿Desea enviar el reporte de tickets en curso como HTML?')) {
+                // Show loading state
+                debug('Enviando reporte HTML...');
+                this.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i> Enviando...';
+                this.disabled = true;
+                
+                // Send request to API
+                fetch('/api/send-html-report', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        debug('Reporte HTML enviado', data.message);
+                        alert('Reporte HTML enviado correctamente');
+                    } else {
+                        debug('Error al enviar reporte HTML', data.error);
+                        alert('Error al enviar reporte HTML: ' + data.error);
+                    }
+                    
+                    // Reset button state
+                    this.innerHTML = '<i class="fas fa-paper-plane mr-2"></i> Enviar HTML';
+                    this.disabled = false;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    debug('Error de conexión', error.message);
+                    alert('Error de conexión al enviar reporte');
+                    
+                    // Reset button state
+                    this.innerHTML = '<i class="fas fa-paper-plane mr-2"></i> Enviar HTML';
+                    this.disabled = false;
+                });
+            }
+        });
+
+        // Función para previsualizar el reporte HTML
+        function previewHtmlReport() {
+            debug('Abriendo previsualización HTML...');
+            window.open('/render-tickets-html', '_blank');
+        }
+        
+        // Ocultar/mostrar panel de debug con doble clic
+        document.getElementById('debugPanel').addEventListener('dblclick', function() {
+            const isVisible = this.style.display !== 'none';
+            this.style.display = isVisible ? 'none' : 'block';
+        });
+    </script>
+</body>
+</html>

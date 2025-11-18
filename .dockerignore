@@ -1,0 +1,50 @@
+# Control de versiones
+.git
+.gitignore
+.svn
+.hg
+
+# Entornos virtuales
+venv/
+env/
+.venv/
+.env/
+__pycache__/
+
+# Archivos Python compilados
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Logs y bases de datos
+*.log
+logs/
+app.log
+*.db
+*.sqlite3
+basededatos/*.db
+actions_log_*.json
+
+# Directorios que serán montados como volúmenes
+# No incluirlos en la imagen pero disponibles en tiempo de ejecución
+basededatos/
+static/
+auth_config.json
+
+# Directorios y archivos específicos del sistema
+.DS_Store
+.idea/
+.vscode/
+__pycache__/
+*.swp
+*.swo
+
+# Documentación y otros archivos no necesarios
+README.md
+LICENSE
+docs/
+.gitlab-ci.yml
+.travis.yml
+Thumbs.db
+desktop.ini

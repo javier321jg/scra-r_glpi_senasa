@@ -1,0 +1,119 @@
+SELECT DISTINCT
+       s.nombre_razon_social exportador,
+       s.DOCUMENTO_NUMERO,
+       s.TELEFONO,
+       s.TELEFONO_MOVIL,
+       c.descripcion_centro_tramite AS centro_tramite,
+       ine.desc_sede_sed AS sede,
+       CASE
+          WHEN i.alm_puest_control = '1' THEN 'PCC'
+          WHEN i.plan_trat_emp = '1' THEN 'PTE'
+          WHEN i.plan_empac = '1' THEN 'PE'
+          WHEN i.plan_trat = '1' THEN 'PT'
+          WHEN i.cent_insp = '1' THEN 'CI'
+          WHEN i.plan_empac_nc = '1' THEN 'PE/NC'
+          WHEN i.inst_exportador_nc = '1' THEN 'IE/NC'
+          ELSE ''
+       END
+          tipo_instalacion,
+       I.CODIGO_IIV,
+       I.CODIGO_EXPEDIENTE AS expediente,
+       LP.COD_LP_PROD,
+       CASE WHEN i.user_crea = 'VUCE' THEN 'VUCE' ELSE 'BPM' END canal,
+       i.cod_instalacion cod_instalacion,
+       i.direcc_exportador,
+       i.nom_razsoc_envio instalacion,
+       i.NOMB_RAZSOC_PROD AS razon_envio,
+       i.uso_dest_envio,
+       i.PUEST_CONT_SALI_ENVIO,
+       i.PUNT_LLEG_ENVIO,
+       ipro.cant_prod nro_envase,
+       ipro.peso_net_prod peso_Kg,
+       prd.nombre_comercial_producto producto,
+       prd.NOMBRE_CIENTIFICO_PRODUCTO,
+       DT.NOMB_DPTO_DPT AS departamento_producto,
+       v.NOMB_COMU_CUV variedad,
+       te.descripcion_tipo_envase tipo_envase,
+       pa.nomb_pais_tpa AS destino,
+       i.puest_cont_sali_envio lugar_embarque,
+       i.punt_lleg_envio lugar_destino,
+       i.med_trans_envio medio_transporte,
+    
+       i.nom_razsoc_importador importador,
+       i.direcc_importador,
+       (CASE UPPER (i.tipo_certificado)
+           WHEN 'ELECTRONICO' THEN 'SI'
+           ELSE 'NO'
+        END)
+          AS certificacion_electronica,
+       TO_CHAR (i.fech_crea, 'dd/mm/yyyy') fecha_solicitud,
+       TO_CHAR (i.fech_crea, 'rrrr') año_solicitud,
+       TO_CHAR (i.fecha_inspeccion, 'mm') mes_inspeccion,
+       TO_CHAR (i.fecha_inspeccion, 'ww') semana_inspeccion,
+       TO_CHAR (i.fecha_inspeccion, 'dd/mm/yyyy') fecha_inspeccion,
+       i.estado,
+       CASE
+          WHEN (SELECT COUNT (*)
+                  FROM finalbpm.informe_inspeccion_numero_cert ic
+                 WHERE ic.codigo_iiv = i.codigo_iiv) > 0
+          THEN
+             finalbpm.nro_cert_exp (i.codigo_iiv)
+          ELSE
+             i.nro_certificado_fito
+       END
+          nro_certificado,
+       TO_CHAR (x.fech_crea, 'dd/mm/yyyy') fecha_emision,
+       TO_CHAR (x.fech_crea, 'MM') mes_emision,
+       CASE
+          WHEN x.cond_certifacion = 'Apto' THEN 'APROBADO'
+          WHEN x.cond_certifacion = 'N' THEN 'RECHAZADO'
+          ELSE ''
+       END
+          estado_certificado,
+       x.contenedores_res contenedores,
+       x.estado_inspeccion estado_inspeccion,
+       x.COND_CERTIFACION,
+       --x.EMPLEADO_CIERRE,
+       x.PRECINTOS_RES,
+       x.CONTENEDORES_RES,
+       x.OBSERVACIONES_RES,
+       X.NAVE_RES,
+       X.PERMISO_RES,
+       M1.NOMB_CORT_PER as usuario_inspeccion,
+       ---I.EMPLEADO_CIERRE,
+      M2.NOMB_CORT_PER as usuario_certificado,
+   --.empleado_firma,
+      DO.COD_FORMATO,
+      DO.ORDEN_NUMERO,
+      SUBSTR (nro_certificado_fito_23,
+               1,
+               (INSTR (nro_certificado_fito_23, ']'))-1) AS NUMERO_CER_SNS022,
+               substr(nro_certificado_fito_23, -6, 6) AS NUMERO_CER_SNS023,               
+       i.nro_certificado_fito_23 as certicados,
+      NRO_CERTIFICADO_FITO  NUMERO_CERTIFICADO_VIGENTE
+       
+          
+  FROM finalbpm.informe_inspeccion_verificacio i
+       LEFT JOIN finalbpm.Info_Insp_Veri_Lp_Prod LP  ON i.codigo_iiv = LP.codigo_iiv
+       LEFT JOIN finalbpm.expediente e ON i.codigo_expediente = e.codigo_expediente
+       LEFT JOIN SISTEMAS.persona s ON e.persona_id = s.persona_id
+       LEFT JOIN finalbpm.centro_tramite c   ON c.codigo_centro_tramite = i.codigo_centro_tramite
+       LEFT JOIN siga.sedes_inei ine ON c.codi_sede_sed = ine.codi_sede_sed
+       LEFT JOIN finalbpm.info_insp_veri_producto ipro   ON i.codigo_iiv = ipro.codigo_iiv
+       LEFT JOIN finalbpm.producto prd ON ipro.codigo_producto = prd.codigo_producto
+       LEFT JOIN SIGA.TDEPARTAMENTOS DT ON ipro.DEP_ORIG_PROD = DT.CODI_DEPA_DPT
+       LEFT JOIN SIGSVE.catalogo_cultivar v   ON     ipro.codi_cult_int = v.CODI_CULT_INT AND ipro.codi_culv_cul = v.CODI_CULV_CUL
+       LEFT JOIN finalbpm.tipo_envase te ON ipro.codigo_tipo_envase = te.codigo_tipo_envase
+       LEFT JOIN siga.tpaises pa ON pa.codi_pais_tpa = i.pais_dest_envio
+       LEFT JOIN finalbpm.expediente_resultados x  ON i.codigo_expediente = x.expediente
+       LEFT JOIN siga.maestro_personal m1  ON i.empleado_cierre = m1 .codi_empl_per 
+              LEFT JOIN siga.maestro_personal m2  ON x.empleado_firma = m2.codi_empl_per
+              LEFT JOIN vuce.documento do ON  i.codigo_expediente=do.doc_numero
+           
+             
+
+ WHERE 
+ E.ESTADO = 'ACTIVO' 
+ --AND i.codigo_expediente = '190270006866'
+  AND DO.DOC_TIPO='E'
+  and  TO_CHAR (e.fech_crea, 'rrrr') IN ('2024');

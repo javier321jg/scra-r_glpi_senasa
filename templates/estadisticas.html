@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SENASA - Estadísticas de Tickets</title>
+  <!-- Tailwind CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- DataTables CSS -->
+  <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Exportación -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <!-- jQuery -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <!-- DataTables JS -->
+  <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+  
+  <style>
+    :root {
+      --primary: #1e40af;
+      --primary-dark: #1e3a8a;
+      --primary-light: #3b82f6;
+      --secondary: #64748b;
+      --accent: #818cf8;
+      --success: #22c55e;
+      --warning: #eab308;
+      --danger: #ef4444;
+      --neutral: #f8fafc;
+      --card-bg: rgba(255, 255, 255, 0.95);
+    }
+    
+    body, html {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f0f4f8;
+      scroll-behavior: smooth;
+    }
+    
+    /* Gradientes y fondos */
+    .blue-gradient {
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+    }
+    
+    .bg-pattern {
+      background-color: #f0f4f8;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231e40af' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    
+    /* Componentes de tarjetas */
+    .glass-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border-radius: 1rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .glass-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* Animaciones */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.5s ease-in-out forwards;
+    }
+    
+    .slide-up {
+      animation: slideUp 0.5s ease-out forwards;
+    }
+    
+    /* Elementos de navegación */
+    .nav-link {
+      color: var(--secondary);
+      padding: 1rem 1.5rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      border-bottom: 2px solid transparent;
+    }
+    
+    .nav-link:hover, .nav-link.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+    
+    /* Tabla mejorada */
+    .data-table {
+      border-collapse: separate;
+      border-spacing: 0;
+      width: 100%;
+      overflow: hidden;
+      border-radius: 0.5rem;
+    }
+    
+    .data-table th {
+      background-color: var(--primary-dark);
+      color: white;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
+      border: none;
+      padding: 1rem;
+    }
+    
+    .data-table td {
+      border-bottom: 1px solid #e2e8f0;
+      padding: 1rem;
+      transition: background-color 0.2s ease;
+    }
+    
+    .data-table tr:hover td {
+      background-color: rgba(59, 130, 246, 0.05);
+    }
+    
+    /* Clasificaciones de tickets */
+    .badge {
+      padding: 0.35rem 0.65rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+    }
+    
+    .badge-new {
+      background-color: #dbeafe;
+      color: #1e40af;
+    }
+    
+    .badge-waiting {
+      background-color: #ffedd5;
+      color: #9a3412;
+    }
+    
+    .badge-progress {
+      background-color: #fef3c7;
+      color: #92400e;
+    }
+    
+    .badge-resolved {
+      background-color: #dcfce7;
+      color: #15803d;
+    }
+    
+    /* Botones */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+    }
+    
+    .btn-success {
+      background-color: var(--success);
+      color: white;
+    }
+    
+    .btn-warning {
+      background-color: var(--warning);
+      color: white;
+    }
+    
+    .btn-danger {
+      background-color: var(--danger);
+      color: white;
+    }
+    
+    /* Utilidades */
+    .shadow-hover {
+      transition: all 0.3s ease;
+    }
+    
+    .shadow-hover:hover {
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    
+    /* Progress bars */
+    .progress-wrapper {
+      background: #e2e8f0;
+      border-radius: 9999px;
+      height: 0.5rem;
+      overflow: hidden;
+      margin: 0.5rem 0;
+    }
+    
+    .progress-bar {
+      height: 100%;
+      border-radius: 9999px;
+      transition: width 0.5s ease;
+    }
+    
+    /* Skeleton loading */
+    .skeleton {
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 4px;
+    }
+    
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    
+    /* Tooltip */
+    .tooltip {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .tooltip .tooltip-text {
+      visibility: hidden;
+      background-color: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px 10px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      white-space: nowrap;
+      font-size: 0.75rem;
+    }
+    
+    .tooltip:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
+    
+    /* Scrollbar personalizado */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 10px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: #a1a1a1;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .grid-cols-2 {
+        grid-template-columns: 1fr;
+      }
+      
+      .nav-link {
+        padding: 0.75rem 1rem;
+      }
+      
+      .data-table {
+        font-size: 0.85rem;
+      }
+      
+      .data-table th, .data-table td {
+        padding: 0.75rem 0.5rem;
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-pattern">
+  <!-- Header con gradiente -->
+  <header class="blue-gradient text-white shadow-lg">
+    <div class="container mx-auto py-6 px-4">
+      <div class="flex flex-col md:flex-row items-center justify-between">
+        <div class="flex items-center space-x-4 mb-4 md:mb-0">
+          <div class="w-16 h-16 bg-white rounded-full p-2 shadow-lg flex items-center justify-center">
+            <img src="https://www.gob.pe/rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MTQ1MDAsInB1ciI6ImJsb2JfaWQifX0=--d56e8d89845af7a460ccbe0d65ed319826301586/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJwbmciLCJyZXNpemVfdG9fbGltaXQiOltudWxsLDQ4XX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--830247c4bafe7cadca50817d8559bf1a09e3aa28/Sin%20ti%CC%81tulo-1-01%20(1).png" 
+                 alt="SENASA Logo" 
+                 class="w-12 h-12 object-contain">
+          </div>
+          <div>
+            <h1 class="text-3xl font-bold tracking-tight">Dashboard de Tickets</h1>
+            <p class="text-blue-100 text-sm">Sistema Nacional de Sanidad Agraria</p>
+          </div>
+        </div>
+        
+        <div class="flex flex-wrap gap-3">
+          <div class="bg-white text-blue-800 px-4 py-2 rounded-lg shadow-md flex items-center">
+            <i class="fas fa-ticket-alt mr-2"></i>
+            Total: <span id="totalTickets" class="font-bold ml-1">0</span>
+          </div>
+          
+          <div id="lastUpdate" class="bg-blue-800 text-white px-4 py-2 rounded-lg shadow-md flex items-center">
+            <i class="fas fa-sync-alt mr-2"></i>
+            Actualizado: <span class="font-medium ml-1">--:--</span>
+          </div>
+          
+          <div id="connectionStatus" class="bg-gray-700 text-white px-4 py-2 rounded-lg shadow-md flex items-center">
+            <i class="fas fa-plug mr-2"></i>
+            <span>Conectando...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+  
+  <!-- Navegación -->
+  <div class="container mx-auto mt-6 px-4">
+    <nav class="bg-white rounded-xl shadow-md p-1 flex flex-wrap">
+      <a href="/" class="nav-link">
+        <i class="fas fa-home mr-2"></i>Inicio
+      </a>
+      <a href="/estadisticas" class="nav-link active">
+        <i class="fas fa-chart-line mr-2"></i>Estadísticas
+      </a>
+      
+      <a href="/tecnicos" class="nav-link">
+        <i class="fas fa-users-cog mr-2"></i>Técnicos
+      </a>
+      <a href="/email_tickets_report" class="nav-link">
+        <i class="fas fa-cog mr-2"></i>email_tickets_report
+      </a>
+    </nav>
+  </div>
+  
+  <!-- Panel de filtros -->
+  <div class="container mx-auto mt-6 px-4">
+    <div class="glass-card p-4 fade-in">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center flex-wrap gap-3">
+          <span class="text-gray-700 font-medium">Filtrar por:</span>
+          
+          <select id="categoryFilter" class="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 px-3 py-2">
+            <option value="all">Todas las categorías</option>
+            <option value="nuevos">Nuevos</option>
+            <option value="en_curso">En Curso</option>
+            <option value="espera">En Espera</option>
+            <option value="resueltos">Resueltos</option>
+          </select>
+          
+          <select id="timeFilter" class="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 px-3 py-2">
+            <option value="all">Todo el tiempo</option>
+            <option value="today">Hoy</option>
+            <option value="week">Esta semana</option>
+            <option value="month">Este mes</option>
+            <option value="quarter">Este trimestre</option>
+          </select>
+          
+          <select id="technicianFilter" class="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 px-3 py-2">
+            <option value="all">Todos los técnicos</option>
+            <!-- Se llenará dinámicamente -->
+          </select>
+        </div>
+        
+        <div class="flex gap-2">
+          
+          
+          <div class="relative inline-block">
+            <button id="exportBtn" class="btn btn-primary">
+              <i class="fas fa-download"></i>
+              <span>Exportar</span>
+            </button>
+            <div id="exportMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+              <div class="py-1">
+                <button onclick="exportTableToExcel()" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                  <i class="fas fa-file-excel text-green-600 mr-2"></i> Exportar a Excel
+                </button>
+                <button onclick="exportTableToPDF()" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                  <i class="fas fa-file-pdf text-red-600 mr-2"></i> Exportar a PDF
+                </button>
+                <button onclick="exportTableToJPG()" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                  <i class="fas fa-image text-blue-600 mr-2"></i> Exportar a JPG
+                </button>
+                
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Indicadores Clave (KPI Cards) -->
+  <div class="container mx-auto mt-6 px-4">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 slide-up" style="animation-delay: 0.1s">
+      <!-- Total de Tickets -->
+      <div id="totalTicketsCard" class="glass-card p-6 cursor-pointer">
+        <div class="flex items-center">
+          <div class="rounded-full w-12 h-12 flex items-center justify-center bg-blue-100 mr-4">
+            <i class="fas fa-ticket-alt text-2xl text-blue-600"></i>
+          </div>
+          <div>
+            <p class="text-gray-500 text-sm font-medium">Total Tickets</p>
+            <p class="text-3xl font-bold text-gray-800" id="cardTotalTickets">0</p>
+          </div>
+        </div>
+        <div class="mt-4">
+          <div class="flex justify-between text-sm text-gray-500">
+            <span>Evolución</span>
+            <span id="ticketsTrend">0%</span>
+          </div>
+          <div class="progress-wrapper">
+            <div class="progress-bar bg-blue-500" style="width: 75%"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Tickets en Curso -->
+      <div id="inCourseCard" class="glass-card p-6 cursor-pointer">
+        <div class="flex items-center">
+          <div class="rounded-full w-12 h-12 flex items-center justify-center bg-yellow-100 mr-4">
+            <i class="fas fa-tasks text-2xl text-yellow-600"></i>
+          </div>
+          <div>
+            <p class="text-gray-500 text-sm font-medium">En Curso</p>
+            <p class="text-3xl font-bold text-gray-800" id="cardInCourse">0</p>
+          </div>
+        </div>
+        <div class="mt-4">
+          <div class="flex justify-between text-sm text-gray-500">
+            <span>% del Total</span>
+            <span id="inCoursePercent">0%</span>
+          </div>
+          <div class="progress-wrapper">
+            <div class="progress-bar bg-yellow-500" style="width: 45%"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Tickets en Espera -->
+      <div id="waitingCard" class="glass-card p-6 cursor-pointer">
+        <div class="flex items-center">
+          <div class="rounded-full w-12 h-12 flex items-center justify-center bg-orange-100 mr-4">
+            <i class="fas fa-hourglass-half text-2xl text-orange-600"></i>
+          </div>
+          <div>
+            <p class="text-gray-500 text-sm font-medium">En Espera</p>
+            <p class="text-3xl font-bold text-gray-800" id="cardWaiting">0</p>
+          </div>
+        </div>
+        <div class="mt-4">
+          <div class="flex justify-between text-sm text-gray-500">
+            <span>% del Total</span>
+            <span id="waitingPercent">0%</span>
+          </div>
+          <div class="progress-wrapper">
+            <div class="progress-bar bg-orange-500" style="width: 30%"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Tiempo Promedio -->
+      <div id="avgTimeCard" class="glass-card p-6 cursor-pointer">
+        <div class="flex items-center">
+          <div class="rounded-full w-12 h-12 flex items-center justify-center bg-green-100 mr-4">
+            <i class="fas fa-clock text-2xl text-green-600"></i>
+          </div>
+          <div>
+            <p class="text-gray-500 text-sm font-medium">Tiempo Promedio</p>
+            <p class="text-3xl font-bold text-gray-800" id="cardAvgTime">0h</p>
+          </div>
+        </div>
+        <div class="mt-4">
+          <div class="flex justify-between text-sm text-gray-500">
+            <span>vs. Semana Anterior</span>
+            <span id="avgTimeTrend">0%</span>
+          </div>
+          <div class="progress-wrapper">
+            <div class="progress-bar bg-green-500" style="width: 60%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Gráficos -->
+  <div class="container mx-auto mt-6 px-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Distribución por Estado -->
+      <div class="glass-card p-6 slide-up" style="animation-delay: 0.2s">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-lg font-semibold flex items-center">
+            <i class="fas fa-chart-pie text-blue-600 mr-2"></i>
+            Distribución por Estado
+          </h2>
+          <div class="tooltip">
+            <i class="fas fa-info-circle text-gray-400"></i>
+            <span class="tooltip-text">Distribución de tickets según su estado actual</span>
+          </div>
+        </div>
+        <div class="h-80">
+          <canvas id="estadoChart"></canvas>
+        </div>
+      </div>
+      
+      <!-- Tendencia Temporal -->
+      <div class="glass-card p-6 slide-up" style="animation-delay: 0.3s">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-lg font-semibold flex items-center">
+            <i class="fas fa-chart-line text-blue-600 mr-2"></i>
+            Tendencia Temporal
+          </h2>
+          <div class="tooltip">
+            <i class="fas fa-info-circle text-gray-400"></i>
+            <span class="tooltip-text">Evolución de tickets a lo largo del tiempo</span>
+          </div>
+        </div>
+        <div class="h-80">
+          <canvas id="tendenciaChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Gráficos adicionales -->
+  <div class="container mx-auto mt-6 px-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Tickets por Categoría -->
+      <div class="glass-card p-6 slide-up" style="animation-delay: 0.4s">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-lg font-semibold flex items-center">
+            <i class="fas fa-folder text-blue-600 mr-2"></i>
+            Tickets por Categoría
+          </h2>
+          <div class="tooltip">
+            <i class="fas fa-info-circle text-gray-400"></i>
+            <span class="tooltip-text">Distribución por categorías</span>
+          </div>
+        </div>
+        <div class="h-80">
+          <canvas id="categoryChart"></canvas>
+        </div>
+      </div>
+      
+      <!-- Tiempo Promedio por Técnico -->
+      <div class="glass-card p-6 slide-up" style="animation-delay: 0.5s">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-lg font-semibold flex items-center">
+            <i class="fas fa-stopwatch text-blue-600 mr-2"></i>
+            Tiempo Promedio por Técnico
+          </h2>
+          <div class="tooltip">
+            <i class="fas fa-info-circle text-gray-400"></i>
+            <span class="tooltip-text">Tiempo promedio de resolución por técnico</span>
+          </div>
+        </div>
+        <div class="h-80">
+          <canvas id="timeByTechnicianChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Gráfico Grande: Tickets por Técnico -->
+  <div class="container mx-auto mt-6 px-4">
+    <div class="glass-card p-6 slide-up" style="animation-delay: 0.6s">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-semibold flex items-center">
+          <i class="fas fa-users-cog text-blue-600 mr-2"></i>
+          Tickets por Técnico
+        </h2>
+        <div class="tooltip">
+          <i class="fas fa-info-circle text-gray-400"></i>
+          <span class="tooltip-text">Tickets asignados a cada técnico</span>
+        </div>
+      </div>
+      <div class="h-96">
+        <canvas id="technicianChart"></canvas>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Tabla de Técnicos -->
+  <div class="container mx-auto mt-6 px-4 mb-8">
+    <div class="glass-card overflow-hidden slide-up" style="animation-delay: 0.7s">
+      <div class="blue-gradient text-white p-4 flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+          <i class="fas fa-users text-xl"></i>
+          <h2 class="text-lg font-semibold">Tickets por Técnico y Periodo</h2>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button onclick="exportTableToExcel()" class="btn bg-green-600 hover:bg-green-700 text-white">
+            <i class="fas fa-file-excel"></i>
+            <span class="hidden md:inline">Excel</span>
+          </button>
+          <button onclick="exportTableToPDF()" class="btn bg-red-600 hover:bg-red-700 text-white">
+            <i class="fas fa-file-pdf"></i>
+            <span class="hidden md:inline">PDF</span>
+          </button>
+          <button onclick="exportTableToJPG()" class="btn bg-blue-600 hover:bg-blue-700 text-white">
+            <i class="fas fa-image"></i>
+            <span class="hidden md:inline">JPG</span>
+          </button>
+          
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="data-table min-w-full" id="technicianTable">
+          <thead>
+            <tr>
+              <th class="text-left">
+                <div class="flex items-center">
+                  <i class="fas fa-user-shield mr-2"></i>
+                  Técnico
+                </div>
+              </th>
+              <th class="text-center">
+                <div class="flex items-center justify-center">
+                  <i class="far fa-calendar mr-2"></i>
+                  <span id="currentMonth">Enero</span>
+                </div>
+              </th>
+              <th class="text-center">
+                <div class="flex items-center justify-center">
+                  <i class="fas fa-hashtag mr-2"></i>
+                  Total
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody id="technicianTableBody">
+            <!-- Se llenará dinámicamente -->
+            <tr>
+              <td colspan="3" class="text-center py-8 text-gray-500">
+                <i class="fas fa-spinner fa-spin text-blue-500 text-2xl mb-2"></i>
+                <p>Cargando datos...</p>
+              </td>
+            </tr>
+          </tbody>
+          <tfoot class="bg-gray-100">
+            <tr>
+              <td class="font-semibold">
+                <div class="flex items-center">
+                  <i class="fas fa-calculator mr-2"></i>
+                  Total General
+                </div>
+              </td>
+              <td class="text-center font-semibold" id="monthTotal">0</td>
+              <td class="text-center font-semibold" id="grandTotal">0</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <div class="p-4 bg-gray-50 text-right">
+        <small class="text-gray-500">
+          <i class="fas fa-info-circle mr-1"></i>
+          Haga clic en cualquier valor para ver más detalles
+        </small>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Footer -->
+  <footer class="blue-gradient text-white mt-10 py-8">
+    <div class="container mx-auto px-4">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <div class="mb-4 md:mb-0">
+          <img src="https://www.gob.pe/rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MTQ1MDAsInB1ciI6ImJsb2JfaWQifX0=--d56e8d89845af7a460ccbe0d65ed319826301586/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJwbmciLCJyZXNpemVfdG9fbGltaXQiOltudWxsLDQ4XX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--830247c4bafe7cadca50817d8559bf1a09e3aa28/Sin%20ti%CC%81tulo-1-01%20(1).png" 
+               alt="SENASA Logo" 
+               class="h-10 bg-white p-1 rounded-full">
+        </div>
+        <div class="text-center md:text-left mb-4 md:mb-0">
+          <h3 class="text-lg font-semibold">Sistema Nacional de Sanidad Agraria</h3>
+          <p class="text-sm text-blue-100">Sistema de Seguimiento de Tickets</p>
+        </div>
+        <div>
+          <p class="text-sm">&copy; 2025 SENASA - Todos los derechos reservados</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+  
+  <!-- Template para el modal de detalles -->
+  <template id="modalTemplate">
+    <div class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+      <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl flex flex-col">
+        <div class="bg-blue-900 text-white px-6 py-4 rounded-t-lg flex justify-between items-center">
+          <h3 class="text-lg font-semibold">Detalle de Tickets</h3>
+          <button class="text-white hover:text-gray-200" id="closeModalBtn">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="p-6 overflow-y-auto max-h-[70vh]" id="modalContent">
+          <!-- Contenido dinámico -->
+        </div>
+        <div class="bg-gray-100 px-6 py-4 rounded-b-lg flex justify-end">
+          <button class="bg-blue-900 text-white px-4 py-2 rounded hover:bg-blue-800" id="closeModalBtnBottom">
+            Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+  </template>
+  
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+  <script src="/static/js/estadisticas-base.js"></script>
+  <script src="/static/js/estadisticas-visuals.js"></script>
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SENASA - Acceso al Área Privada</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        
+        .logo-glow {
+            filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.5));
+        }
+        
+        .logo-shine {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                45deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.1) 45%,
+                rgba(255, 255, 255, 0.4) 50%,
+                rgba(255, 255, 255, 0.1) 55%,
+                transparent 100%
+            );
+            background-size: 200% 200%;
+            animation: shine 3s infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes shine {
+            0% { background-position: -200% -200%; }
+            100% { background-position: 200% 200%; }
+        }
+        
+        .header-container {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        }
+        
+        .login-card {
+            background-color: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px -5px rgba(30, 58, 138, 0.1), 0 8px 10px -6px rgba(30, 58, 138, 0.1);
+            overflow: hidden;
+            max-width: 450px;
+            width: 100%;
+        }
+        
+        .login-header {
+            background: linear-gradient(to right, #1e3a8a, #1e40af);
+            padding: 1.5rem;
+            color: white;
+            text-align: center;
+        }
+        
+        .form-input {
+            border: 1px solid #e5e7eb;
+            border-radius: 0.375rem;
+            padding: 0.75rem 1rem;
+            width: 100%;
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+        
+        .submit-btn {
+            background: linear-gradient(to right, #1e3a8a, #3b82f6);
+            color: white;
+            border: none;
+            border-radius: 0.375rem;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            width: 100%;
+        }
+        
+        .submit-btn:hover {
+            opacity: 0.9;
+        }
+        
+        .error-message {
+            background-color: #fee2e2;
+            color: #b91c1c;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            border-left: 4px solid #dc2626;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+    <!-- Header -->
+    <header class="header-container text-white p-6 shadow-lg">
+        <div class="container mx-auto flex items-center justify-center">
+            <div class="flex items-center space-x-4">
+                <div class="logo-container relative w-16 h-16">
+                    <img src="https://www.gob.pe/rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MTQ1MDAsInB1ciI6ImJsb2JfaWQifX0=--d56e8d89845af7a460ccbe0d65ed319826301586/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJwbmciLCJyZXNpemVfdG9fbGltaXQiOltudWxsLDQ4XX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--830247c4bafe7cadca50817d8559bf1a09e3aa28/Sin%20ti%CC%81tulo-1-01%20(1).png" 
+                         alt="SENASA Logo" 
+                         class="logo-glow w-full h-full object-contain bg-white p-1 rounded-full">
+                    <div class="logo-shine"></div>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-bold tracking-tight">SENASA</h1>
+                    <p class="text-blue-100 text-sm">Sistema Nacional de Sanidad Agraria</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Login Form Container -->
+    <main class="flex-grow flex items-center justify-center p-4">
+        <div class="login-card">
+            <div class="login-header">
+                <h2 class="text-xl font-semibold">Área Privada</h2>
+                <p class="text-blue-100 text-sm mt-1">Ingrese su contraseña para acceder</p>
+            </div>
+            
+            <div class="p-6">
+                {% if error %}
+                <div class="error-message">
+                    <i class="fas fa-exclamation-circle mr-2"></i>
+                    {{ error }}
+                </div>
+                {% endif %}
+                
+                {% if session.get('message') %}
+                <div class="bg-blue-100 text-blue-800 p-3 rounded-md mb-4 border-l-4 border-blue-500">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    {{ session.get('message') }}
+                </div>
+                {% endif %}
+                
+                <form method="POST" action="{{ url_for('login') }}">
+                    <div class="mb-6">
+                        <label for="password" class="block text-gray-700 font-medium mb-2">Contraseña</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                <i class="fas fa-lock text-gray-400"></i>
+                            </div>
+                            <input type="password" id="password" name="password" 
+                                   class="form-input pl-10" 
+                                   placeholder="Ingrese la contraseña del sistema" 
+                                   required 
+                                   autofocus>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn mt-2">
+                        <i class="fas fa-sign-in-alt mr-2"></i>
+                        Ingresar
+                    </button>
+                </form>
+                
+                <div class="mt-4 text-center">
+                    <a href="{{ url_for('index') }}" class="text-sm text-blue-600 hover:text-blue-800">
+                        <i class="fas fa-arrow-left mr-1"></i> Volver a la página principal
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-4 text-center">
+        <div class="container mx-auto">
+            <p class="text-sm">&copy; {{ now.year }} SENASA - Sistema Nacional de Sanidad Agraria</p>
+            <p class="text-xs text-gray-400 mt-1">Todos los derechos reservados</p>
+        </div>
+    </footer>
+
+    <script>
+        // Enfoque automático en el campo de contraseña
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordInput = document.getElementById('password');
+            if (passwordInput) passwordInput.focus();
+        });
+    </script>
+</body>
+</html>

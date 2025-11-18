@@ -1,0 +1,21 @@
+# Archivos de entorno y secretos (MUY IMPORTANTE)
+.env
+auth_config.json
+email_config.json
+email_history.json
+
+# Carpetas de Python y Entorno Virtual
+venv/
+__pycache__/
+*.pyc
+
+# Archivos de Logs (Logs gigantes)
+*.log
+actions_log_*.json
+
+# Archivos ejecutables
+*.exe
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db

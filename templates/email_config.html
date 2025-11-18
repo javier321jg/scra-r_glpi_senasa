@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración de Correo - SENASA</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .tab-active {
+            border-bottom: 3px solid #3b82f6;
+            color: #1e40af;
+            font-weight: 600;
+        }
+        
+        .tab-inactive {
+            border-bottom: 3px solid transparent;
+            color: #6b7280;
+        }
+        
+        .history-item {
+            border-left: 4px solid transparent;
+        }
+        
+        .history-success {
+            border-left-color: #10b981;
+        }
+        
+        .history-error {
+            border-left-color: #ef4444;
+        }
+        
+        .preview-frame {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <header class="bg-gradient-to-r from-blue-900 to-blue-700 text-white p-6 shadow-lg">
+        <div class="container mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <div class="relative w-12 h-12">
+                    <img src="https://www.gob.pe/rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MTQ1MDAsInB1ciI6ImJsb2JfaWQifX0=--d56e8d89845af7a460ccbe0d65ed319826301586/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJwbmciLCJyZXNpemVfdG9fbGltaXQiOltudWxsLDQ4XX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--830247c4bafe7cadca50817d8559bf1a09e3aa28/Sin%20ti%CC%81tulo-1-01%20(1).png" 
+                         alt="SENASA Logo" 
+                         class="w-full h-full object-contain bg-white p-1 rounded-full">
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold tracking-tight">Configuración de Correo</h1>
+                    <p class="text-blue-100 text-sm">Sistema Nacional de Sanidad Agraria</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <a href="/" class="px-4 py-2 bg-blue-800 hover:bg-blue-700 rounded-md transition duration-300 flex items-center">
+                    <i class="fas fa-home mr-2"></i>
+                    Inicio
+                </a>
+                <a href="/estadisticas" class="px-4 py-2 bg-blue-800 hover:bg-blue-700 rounded-md transition duration-300 flex items-center">
+                    <i class="fas fa-chart-bar mr-2"></i>
+                    Estadísticas
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto py-8 px-4">
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+            <div class="flex border-b">
+                <button id="tab-config" class="flex-1 py-4 px-6 text-center tab-active focus:outline-none">
+                    <i class="fas fa-cog mr-2"></i>
+                    Configuración
+                </button>
+                <button id="tab-preview" class="flex-1 py-4 px-6 text-center tab-inactive focus:outline-none">
+                    <i class="fas fa-eye mr-2"></i>
+                    Previsualización
+                </button>
+                <button id="tab-history" class="flex-1 py-4 px-6 text-center tab-inactive focus:outline-none">
+                    <i class="fas fa-history mr-2"></i>
+                    Historial
+                </button>
+            </div>
+            
+            <!-- Panel de Configuración -->
+            <div id="panel-config" class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h2 class="text-xl font-semibold mb-4 text-gray-800">
+                            <i class="fas fa-server text-blue-600 mr-2"></i>
+                            Servidor de Correo
+                        </h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label for="server" class="block text-sm font-medium text-gray-700">Servidor SMTP</label>
+                                <input type="text" id="server" name="server" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label for="port" class="block text-sm font-medium text-gray-700">Puerto</label>
+                                <input type="number" id="port" name="port" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label for="user" class="block text-sm font-medium text-gray-700">Usuario</label>
+                                <input type="text" id="user" name="user" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label for="password" class="block text-sm font-medium text-gray-700">Contraseña</label>
+                                <input type="password" id="password" name="password" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-semibold mb-4 text-gray-800">
+                            <i class="fas fa-envelope text-blue-600 mr-2"></i>
+                            Configuración de Mensajes
+                        </h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label for="to" class="block text-sm font-medium text-gray-700">Para (correos separados por comas)</label>
+                                <input type="text" id="to" name="to" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label for="cc" class="block text-sm font-medium text-gray-700">CC (opcional)</label>
+                                <input type="text" id="cc" name="cc" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label for="subject" class="block text-sm font-medium text-gray-700">Asunto</label>
+                                <input type="text" id="subject" name="subject" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label for="message" class="block text-sm font-medium text-gray-700">Mensaje</label>
+                                <textarea id="message" name="message" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Horarios y opciones -->
+                <div class="mt-8">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-800">
+                        <i class="fas fa-clock text-blue-600 mr-2"></i>
+                        Programación de Reportes
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <div class="flex items-center mb-4">
+                                <input type="checkbox" id="enableSchedule" name="enableSchedule" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                <label for="enableSchedule" class="ml-2 block text-sm text-gray-700">Habilitar envío automático</label>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700">Horarios de envío <span class="text-xs text-gray-500">(Formato 24h)</span></label>
+                                <div id="scheduleTimes" class="mt-2 space-y-2">
+                                    <div class="flex items-center">
+                                        <input type="time" class="scheduleTime form-input rounded-md shadow-sm border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                                        <button type="button" class="removeTime ml-2 text-red-500 hover:text-red-700">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <button type="button" id="addTimeBtn" class="mt-2 inline-flex items-center px-3 py-1 border border-transparent text-sm leading-4 font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                    <i class="fas fa-plus mr-1"></i> Añadir horario
+                                </button>
+                            </div>
+                            
+                            <div class="flex items-center">
+                                <input type="checkbox" id="includeWeekends" name="includeWeekends" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                <label for="includeWeekends" class="ml-2 block text-sm text-gray-700">Incluir fines de semana</label>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-col justify-center">
+                            <p class="text-sm text-gray-600 mb-4">
+                                <i class="fas fa-info-circle text-blue-500 mr-1"></i>
+                                El reporte se enviará automáticamente en los horarios especificados como un correo con formato HTML.
+                            </p>
+                            <div class="flex items-center justify-center space-x-2 mb-4">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    <i class="fas fa-code mr-1"></i> Formato HTML
+                                </span>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                    <i class="fas fa-table mr-1"></i> Tablas Interactivas
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Botones de acción -->
+                <div class="mt-8 flex flex-wrap items-center justify-end space-x-4">
+                    <button type="button" id="saveBtn" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        <i class="fas fa-save mr-2"></i>
+                        Guardar Configuración
+                    </button>
+                    <button type="button" id="testBtn" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                        <i class="fas fa-paper-plane mr-2"></i>
+                        Enviar Prueba
+                    </button>
+                    <button type="button" id="manualSendBtn" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+                        <i class="fas fa-envelope mr-2"></i>
+                        Enviar Ahora
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Panel de Previsualización -->
+            <div id="panel-preview" class="p-6 hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold text-gray-800">
+                        <i class="fas fa-eye text-blue-600 mr-2"></i>
+                        Previsualización de Reporte HTML
+                    </h2>
+                    <div class="flex space-x-2">
+                        <button id="refreshPreviewBtn" class="inline-flex items-center px-3 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            <i class="fas fa-sync-alt mr-1"></i>
+                            Actualizar
+                        </button>
+                        <a href="/render-tickets-html" target="_blank" class="inline-flex items-center px-3 py-1 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <i class="fas fa-external-link-alt mr-1"></i>
+                            Abrir en Nueva Ventana
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-100 p-2 rounded-lg">
+                    <iframe id="previewFrame" src="/render-tickets-html" class="preview-frame"></iframe>
+                </div>
+                
+                <div class="mt-4 flex justify-end">
+                    <button type="button" id="sendPreviewBtn" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                        <i class="fas fa-paper-plane mr-2"></i>
+                        Enviar Este Reporte
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Panel de Historial -->
+            <div id="panel-history" class="p-6 hidden">
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">
+                    <i class="fas fa-history text-blue-600 mr-2"></i>
+                    Historial de Envíos
+                </h2>
+                
+                <div id="historyList" class="space-y-3">
+                    <!-- El historial se cargará dinámicamente -->
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-spinner fa-spin text-3xl mb-2"></i>
+                        <p>Cargando historial...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Indicador de estado -->
+        <div id="statusIndicator" class="fixed bottom-4 right-4 p-4 rounded-lg shadow-lg bg-white border-l-4 border-blue-500 hidden">
+            <div class="flex items-center">
+                <i id="statusIcon" class="fas fa-info-circle text-blue-500 mr-2"></i>
+                <span id="statusMessage">Cargando...</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Variables globales
+            let config = {};
+            let currentTab = 'config';
+            
+            // Referencias a elementos de la UI
+            const tabs = {
+                config: document.getElementById('tab-config'),
+                preview: document.getElementById('tab-preview'),
+                history: document.getElementById('tab-history')
+            };
+            
+            const panels = {
+                config: document.getElementById('panel-config'),
+                preview: document.getElementById('panel-preview'),
+                history: document.getElementById('panel-history')
+            };
+            
+            const formInputs = {
+                server: document.getElementById('server'),
+                port: document.getElementById('port'),
+                user: document.getElementById('user'),
+                password: document.getElementById('password'),
+                to: document.getElementById('to'),
+                cc: document.getElementById('cc'),
+                subject: document.getElementById('subject'),
+                message: document.getElementById('message'),
+                enableSchedule: document.getElementById('enableSchedule'),
+                includeWeekends: document.getElementById('includeWeekends')
+            };
+            
+            // Botones
+            const saveBtn = document.getElementById('saveBtn');
+            const testBtn = document.getElementById('testBtn');
+            const manualSendBtn = document.getElementById('manualSendBtn');
+            const addTimeBtn = document.getElementById('addTimeBtn');
+            const refreshPreviewBtn = document.getElementById('refreshPreviewBtn');
+            const sendPreviewBtn = document.getElementById('sendPreviewBtn');
+            
+            // Funciones de utilidad
+            
+            // Mostrar mensaje de estado
+            function showStatus(message, type = 'info') {
+                const statusIndicator = document.getElementById('statusIndicator');
+                const statusIcon = document.getElementById('statusIcon');
+                const statusMessage = document.getElementById('statusMessage');
+                
+                statusMessage.textContent = message;
+                
+                // Configurar icono y color según el tipo
+                statusIndicator.className = 'fixed bottom-4 right-4 p-4 rounded-lg shadow-lg bg-white border-l-4';
+                statusIcon.className = 'fas mr-2';
+                
+                switch (type) {
+                    case 'success':
+                        statusIndicator.classList.add('border-green-500');
+                        statusIcon.classList.add('fa-check-circle', 'text-green-500');
+                        break;
+                    case 'error':
+                        statusIndicator.classList.add('border-red-500');
+                        statusIcon.classList.add('fa-times-circle', 'text-red-500');
+                        break;
+                    case 'warning':
+                        statusIndicator.classList.add('border-yellow-500');
+                        statusIcon.classList.add('fa-exclamation-triangle', 'text-yellow-500');
+                        break;
+                    default:
+                        statusIndicator.classList.add('border-blue-500');
+                        statusIcon.classList.add('fa-info-circle', 'text-blue-500');
+                }
+                
+                statusIndicator.classList.remove('hidden');
+                
+                // Ocultar después de 5 segundos
+                setTimeout(() => {
+                    statusIndicator.classList.add('hidden');
+                }, 5000);
+            }
+            
+            // Cambiar entre tabs
+            function switchTab(tabName) {
+                currentTab = tabName;
+                
+                // Actualizar clase de los tabs
+                Object.keys(tabs).forEach(key => {
+                    if (key === tabName) {
+                        tabs[key].classList.remove('tab-inactive');
+                        tabs[key].classList.add('tab-active');
+                        panels[key].classList.remove('hidden');
+                    } else {
+                        tabs[key].classList.remove('tab-active');
+                        tabs[key].classList.add('tab-inactive');
+                        panels[key].classList.add('hidden');
+                    }
+                });
+                
+                // Si se cambia al tab de preview, actualizar la previsualización
+                if (tabName === 'preview') {
+                    document.getElementById('previewFrame').src = '/render-tickets-html';
+                }
+                
+                // Si se cambia al tab de historial, cargar el historial
+                if (tabName === 'history') {
+                    loadHistory();
+                }
+            }
+            
+            // Cargar configuración
+            function loadConfig() {
+                showStatus('Cargando configuración...');
+                
+                fetch('/api/email-config')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            config = data.config;
+                            
+                            // Actualizar formulario
+                            formInputs.server.value = config.server || '';
+                            formInputs.port.value = config.port || '587';
+                            formInputs.user.value = config.user || '';
+                            formInputs.to.value = config.to || '';
+                            formInputs.cc.value = config.cc || '';
+                            formInputs.subject.value = config.subject || 'Reporte de Tickets - SENASA';
+                            formInputs.message.value = config.message || 'Adjunto encontrará el reporte diario de tickets en curso.';
+                            formInputs.enableSchedule.checked = config.enableSchedule !== false;
+                            formInputs.includeWeekends.checked = config.includeWeekends !== false;
+                            
+                            // Cargar horarios
+                            loadScheduleTimes(config.scheduleTimes || []);
+                            
+                            showStatus('Configuración cargada correctamente', 'success');
+                        } else {
+                            showStatus('Error al cargar configuración: ' + data.error, 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showStatus('Error de conexión: ' + error.message, 'error');
+                    });
+            }
+            
+            // Cargar horarios programados
+            function loadScheduleTimes(times) {
+                const container = document.getElementById('scheduleTimes');
+                container.innerHTML = '';
+                
+                if (!times.length) {
+                    times = ['08:00'];  // Por defecto 8 AM
+                }
+                
+                times.forEach(time => {
+                    addTimeInput(time);
+                });
+            }
+            
+            // Añadir un nuevo input de tiempo
+            function addTimeInput(value = '') {
+                const container = document.getElementById('scheduleTimes');
+                const div = document.createElement('div');
+                div.className = 'flex items-center';
+                div.innerHTML = `
+                    <input type="time" class="scheduleTime form-input rounded-md shadow-sm border-gray-300 focus:border-blue-500 focus:ring-blue-500" value="${value}">
+                    <button type="button" class="removeTime ml-2 text-red-500 hover:text-red-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                
+                container.appendChild(div);
+                
+                // Añadir evento al botón de eliminar
+                div.querySelector('.removeTime').addEventListener('click', function() {
+                    if (container.children.length > 1) {
+                        container.removeChild(div);
+                    }
+                });
+            }
+            
+            // Obtener los valores actuales del formulario
+            function getFormValues() {
+                // Obtener horarios programados
+                const scheduleTimes = [];
+                document.querySelectorAll('.scheduleTime').forEach(input => {
+                    if (input.value) {
+                        scheduleTimes.push(input.value);
+                    }
+                });
+                
+                return {
+                    server: formInputs.server.value,
+                    port: parseInt(formInputs.port.value) || 587,
+                    user: formInputs.user.value,
+                    password: formInputs.password.value,
+                    to: formInputs.to.value,
+                    cc: formInputs.cc.value,
+                    subject: formInputs.subject.value,
+                    message: formInputs.message.value,
+                    enableSchedule: formInputs.enableSchedule.checked,
+                    includeWeekends: formInputs.includeWeekends.checked,
+                    scheduleTimes: scheduleTimes,
+                    scheduleTime: scheduleTimes[0] || '08:00'  // Para compatibilidad
+                };
+            }
+            
+            // Guardar configuración
+            function saveConfig() {
+                const newConfig = getFormValues();
+                
+                // Validar campos obligatorios
+                if (!newConfig.server || !newConfig.user || !newConfig.to) {
+                    showStatus('Por favor complete los campos obligatorios: Servidor, Usuario y Destinatarios', 'warning');
+                    return;
+                }
+                
+                showStatus('Guardando configuración...');
+                
+                fetch('/api/email-config', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(newConfig)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showStatus('Configuración guardada correctamente', 'success');
+                        
+                        // Actualizar historial si está en ese tab
+                        if (currentTab === 'history') {
+                            renderHistory(data.history);
+                        }
+                    } else {
+                        showStatus('Error al guardar: ' + data.error, 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showStatus('Error de conexión: ' + error.message, 'error');
+                });
+            }
+            
+            // Enviar prueba de correo
+            function sendTestEmail() {
+                const testConfig = getFormValues();
+                
+                // Validar campos obligatorios
+                if (!testConfig.server || !testConfig.user || !testConfig.password || !testConfig.to) {
+                    showStatus('Por favor complete los campos obligatorios: Servidor, Usuario, Contraseña y Destinatarios', 'warning');
+                    return;
+                }
+                
+                if (!confirm('¿Desea enviar un correo de prueba a ' + testConfig.to + '?')) {
+                    return;
+                }
+                
+                showStatus('Enviando correo de prueba...');
+                testBtn.disabled = true;
+                testBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i> Enviando...';
+                
+                // Llamar a la API para enviar HTML (no imagen)
+                fetch('/api/send-html-report', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        ...testConfig,
+                        test: true
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showStatus('Correo de prueba enviado correctamente', 'success');
+                        
+                        // Cambiar al tab de historial para ver el resultado
+                        switchTab('history');
+                        loadHistory();
+                    } else {
+                        showStatus('Error al enviar: ' + data.error, 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showStatus('Error de conexión: ' + error.message, 'error');
+                })
+                .finally(() => {
+                    testBtn.disabled = false;
+                    testBtn.innerHTML = '<i class="fas fa-paper-plane mr-2"></i> Enviar Prueba';
+                });
+            }
+            
+            // Enviar reporte manualmente
+            function sendManualReport() {
+                if (!confirm('¿Desea enviar un reporte ahora a los destinatarios configurados?')) {
+                    return;
+                }
+                
+                showStatus('Enviando reporte...');
+                manualSendBtn.disabled = true;
+                manualSendBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i> Enviando...';
+                
+                // Llamar a la API para enviar el reporte HTML (no imagen)
+                fetch('/api/send-html-report', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showStatus('Reporte enviado correctamente', 'success');
+                        
+                        // Cambiar al tab de historial para ver el resultado
+                        switchTab('history');
+                        loadHistory();
+                    } else {
+                        showStatus('Error al enviar: ' + data.error, 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showStatus('Error de conexión: ' + error.message, 'error');
+                })
+                .finally(() => {
+                    manualSendBtn.disabled = false;
+                    manualSendBtn.innerHTML = '<i class="fas fa-envelope mr-2"></i> Enviar Ahora';
+                });
+            }
+            
+            // Cargar historial de envíos
+            function loadHistory() {
+                const historyList = document.getElementById('historyList');
+                historyList.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-spinner fa-spin text-3xl mb-2"></i>
+                        <p>Cargando historial...</p>
+                    </div>
+                `;
+                
+                fetch('/api/email-config')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success && data.history) {
+                            renderHistory(data.history);
+                        } else {
+                            historyList.innerHTML = `
+                                <div class="text-center py-8 text-gray-500">
+                                    <i class="fas fa-exclamation-circle text-3xl mb-2"></i>
+                                    <p>No se pudo cargar el historial</p>
+                                </div>
+                            `;
+                            showStatus('Error al cargar historial: ' + (data.error || 'Desconocido'), 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        historyList.innerHTML = `
+                            <div class="text-center py-8 text-gray-500">
+                                <i class="fas fa-times-circle text-3xl mb-2 text-red-500"></i>
+                                <p>Error de conexión</p>
+                            </div>
+                        `;
+                        showStatus('Error de conexión: ' + error.message, 'error');
+                    });
+            }
+            
+            // Renderizar historial
+            function renderHistory(history) {
+                const historyList = document.getElementById('historyList');
+                
+                if (!history || history.length === 0) {
+                    historyList.innerHTML = `
+                        <div class="text-center py-8 text-gray-500">
+                            <i class="fas fa-inbox text-3xl mb-2"></i>
+                            <p>No hay registros en el historial</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                historyList.innerHTML = '';
+                
+                history.forEach(entry => {
+                    const item = document.createElement('div');
+                    item.className = `history-item p-4 rounded-lg bg-white shadow-sm mb-3 ${entry.success ? 'history-success' : 'history-error'}`;
+                    
+                    const iconClass = entry.success ? 'fa-check-circle text-green-500' : 'fa-times-circle text-red-500';
+                    const statusText = entry.success ? 'Enviado correctamente' : 'Error al enviar';
+                    
+                    item.innerHTML = `
+                        <div class="flex justify-between items-start">
+                            <div class="flex items-start">
+                                <i class="fas ${iconClass} text-xl mt-1 mr-3"></i>
+                                <div>
+                                    <div class="font-medium">${entry.date}</div>
+                                    <div class="text-sm text-gray-600">Destinatarios: ${entry.recipients}</div>
+                                    <div class="text-sm ${entry.success ? 'text-green-600' : 'text-red-600'}">${statusText}</div>
+                                    ${entry.error ? `<div class="mt-1 text-xs text-red-500 bg-red-50 p-2 rounded">${entry.error}</div>` : ''}
+                                </div>
+                            </div>
+                            <div class="text-xs text-gray-500">${getTimeAgo(entry.date)}</div>
+                        </div>
+                    `;
+                    
+                    historyList.appendChild(item);
+                });
+            }
+            
+            // Calcular tiempo transcurrido
+            function getTimeAgo(dateStr) {
+                try {
+                    const parts = dateStr.split(' ');
+                    const dateParts = parts[0].split('/');
+                    const timeParts = parts[1].split(':');
+                    
+                    const day = parseInt(dateParts[0]);
+                    const month = parseInt(dateParts[1]) - 1;
+                    const year = parseInt(dateParts[2]);
+                    const hour = parseInt(timeParts[0]);
+                    const minute = parseInt(timeParts[1]);
+                    
+                    const date = new Date(year, month, day, hour, minute);
+                    const now = new Date();
+                    const diffMs = now - date;
+                    const diffSec = Math.round(diffMs / 1000);
+                    const diffMin = Math.round(diffSec / 60);
+                    const diffHour = Math.round(diffMin / 60);
+                    const diffDay = Math.round(diffHour / 24);
+                    
+                    if (diffSec < 60) {
+                        return 'hace un momento';
+                    } else if (diffMin < 60) {
+                        return `hace ${diffMin} ${diffMin === 1 ? 'minuto' : 'minutos'}`;
+                    } else if (diffHour < 24) {
+                        return `hace ${diffHour} ${diffHour === 1 ? 'hora' : 'horas'}`;
+                    } else {
+                        return `hace ${diffDay} ${diffDay === 1 ? 'día' : 'días'}`;
+                    }
+                } catch (e) {
+                    return dateStr;
+                }
+            }
+            
+            // Eventos
+            
+            // Cambio de tabs
+            tabs.config.addEventListener('click', () => switchTab('config'));
+            tabs.preview.addEventListener('click', () => switchTab('preview'));
+            tabs.history.addEventListener('click', () => switchTab('history'));
+            
+            // Botones de acción
+            saveBtn.addEventListener('click', saveConfig);
+            testBtn.addEventListener('click', sendTestEmail);
+            manualSendBtn.addEventListener('click', sendManualReport);
+            addTimeBtn.addEventListener('click', () => addTimeInput());
+            refreshPreviewBtn.addEventListener('click', () => {
+                document.getElementById('previewFrame').src = '/render-tickets-html?' + new Date().getTime();
+            });
+            sendPreviewBtn.addEventListener('click', sendManualReport);
+            
+            // Inicialización
+            loadConfig();
+        });
+    </script>
+</body>
+</html>

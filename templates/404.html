@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Página no encontrada</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(-45deg, #37a1d6, #5e60ce, #56cfe1, #5e60ce);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+            overflow-x: hidden;
+        }
+        
+        /* Elementos flotantes en el fondo */
+        .floating {
+            position: fixed;
+            width: 50px;
+            height: 50px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            z-index: 1;
+        }
+        
+        .floating:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 10%;
+            left: 10%;
+            animation: float 8s ease-in-out infinite;
+        }
+        
+        .floating:nth-child(2) {
+            width: 60px;
+            height: 60px;
+            top: 20%;
+            right: 10%;
+            animation: float 12s ease-in-out infinite;
+            animation-delay: 1s;
+        }
+        
+        .floating:nth-child(3) {
+            width: 100px;
+            height: 100px;
+            bottom: 10%;
+            left: 15%;
+            animation: float 10s ease-in-out infinite;
+            animation-delay: 2s;
+        }
+        
+        .floating:nth-child(4) {
+            width: 70px;
+            height: 70px;
+            bottom: 20%;
+            right: 15%;
+            animation: float 9s ease-in-out infinite;
+            animation-delay: 3s;
+        }
+        
+        .error-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+            animation: fadeInUp 1s ease-out;
+            position: relative;
+            z-index: 10;
+            margin: 20px;
+        }
+        
+        h1 {
+            font-size: 96px;
+            color: #ff6b6b;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            animation: pulse 2s infinite;
+        }
+        
+        .gif-container {
+            margin: 20px auto;
+            border-radius: 15px;
+            overflow: hidden;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .gif-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        h2 {
+            color: #333;
+            margin: 24px 0 15px 0;
+            font-size: 28px;
+        }
+        
+        p {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 18px;
+        }
+        
+        .home-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            margin-bottom: 20px;
+        }
+        
+        .home-button:hover {
+            background-color: #45a049;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            width: 100%;
+            padding-bottom: 10px;
+        }
+        
+        .copyright {
+            color: #333;
+            font-size: 16px;
+            font-weight: 500;
+            margin-top: 10px;
+            display: block;
+        }
+        
+        .copyright .senasa {
+            font-weight: bold;
+            color: #1a6cb3;
+        }
+        
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translatey(0px);
+            }
+            50% {
+                transform: translatey(-40px);
+            }
+            100% {
+                transform: translatey(0px);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.03);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .error-container {
+                padding: 30px 20px;
+                width: 95%;
+                margin: 10px;
+            }
+            
+            h1 {
+                font-size: 72px;
+            }
+            
+            h2 {
+                font-size: 24px;
+            }
+            
+            .footer {
+                margin-top: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Elementos flotantes para el fondo -->
+    <div class="floating"></div>
+    <div class="floating"></div>
+    <div class="floating"></div>
+    <div class="floating"></div>
+    
+    <div class="error-container">
+        <h1>404</h1>
+        <div class="gif-container">
+            <img src="/static/gif/error.gif" alt="Error animación">
+        </div>
+        <div class="text">
+            <h2>Parece que estás perdido</h2>
+            <p>La página que estás buscando no está disponible</p>
+            <a href="/" class="home-button">Volver al inicio</a>
+        </div>
+        <div class="footer">
+            <div class="copyright"><span class="senasa">SENASA</span> © 2025</div>
+            <div class="copyright">Servicio Nacional de Sanidad Agraria</div>
+        </div>
+    </div>
+</body>
+</html>

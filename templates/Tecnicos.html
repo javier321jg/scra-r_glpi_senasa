@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SENASA - Directorio de Técnicos</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1e40af;
+      --primary-light: #3b82f6;
+      --primary-dark: #1e3a8a;
+      --secondary: #0ea5e9;
+      --accent: #059669;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --gray-light: #f3f4f6;
+      --text-primary: #1f2937;
+      --text-secondary: #6b7280;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+      background-attachment: fixed;
+      color: var(--text-primary);
+    }
+    
+    /* Header */
+    .header-gradient {
+      background: linear-gradient(90deg, var(--primary-dark) 0%, var(--primary) 100%);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Nav */
+    .nav-link {
+      position: relative;
+      display: flex;
+      align-items: center;
+      color: #6b7280;
+      padding: 1rem 1.5rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      border-bottom: 2px solid transparent;
+    }
+    
+    .nav-link.active {
+      color: var(--primary);
+      border-bottom: 2px solid var(--primary);
+    }
+    
+    /* Tarjetas */
+    .tech-card {
+      background: white;
+      border-radius: 1rem;
+      transition: all 0.3s ease;
+      overflow: hidden;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+    
+    .tech-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .tech-header {
+      background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+      color: white;
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .tech-header::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      right: -10px;
+      width: 120px;
+      height: 120px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+    }
+    
+    .avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid white;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .avatar-placeholder {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: white;
+      text-transform: uppercase;
+      font-weight: bold;
+      border: 3px solid white;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .contact-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.75rem;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      transition: all 0.2s ease;
+    }
+    
+    .contact-item:hover {
+      background-color: var(--gray-light);
+    }
+    
+    .contact-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 0.75rem;
+      flex-shrink: 0;
+    }
+    
+    .badge {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-weight: 600;
+    }
+    
+    .badge-primary {
+      background-color: var(--primary-light);
+      color: white;
+    }
+    
+    .badge-secondary {
+      background-color: var(--secondary);
+      color: white;
+    }
+    
+    .badge-success {
+      background-color: var(--success);
+      color: white;
+    }
+    
+    .search-input {
+      background-color: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 9999px;
+      padding: 0.75rem 1rem 0.75rem 2.5rem;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'%3E%3C/path%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: 0.75rem center;
+      background-size: 1.25em 1.25em;
+      width: 100%;
+    }
+    
+    .filter-dropdown {
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      padding: 0.75rem 1rem;
+      font-size: 0.875rem;
+      appearance: none;
+      background-color: white;
+    }
+    
+    .btn-search {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 9999px;
+      padding: 0.75rem 1.5rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    
+    .btn-search:hover {
+      background-color: var(--primary-dark);
+    }
+    
+    /* Loading */
+    .loading-spinner {
+      width: 3rem;
+      height: 3rem;
+      border-radius: 50%;
+      border: 3px solid rgba(59, 130, 246, 0.2);
+      border-top-color: var(--primary);
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* Modal */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    
+    .modal.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    
+    .modal-content {
+      background-color: white;
+      border-radius: 1rem;
+      width: 90%;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+      transform: scale(0.9);
+      transition: transform 0.3s ease;
+    }
+    
+    .modal.active .modal-content {
+      transform: scale(1);
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .nav-link {
+        padding: 0.75rem 1rem;
+      }
+      
+      .tech-header {
+        text-align: center;
+      }
+      
+      .tech-header .flex {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .avatar, .avatar-placeholder {
+        margin-bottom: 1rem;
+      }
+      
+      .search-button-container {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+      
+      .search-button-container .btn-search {
+        width: 100%;
+        margin-top: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+  <!-- Header -->
+  <header class="header-gradient text-white shadow-lg">
+    <div class="container mx-auto px-4 py-4">
+      <div class="flex justify-between items-center">
+        <h1 class="flex items-center space-x-3">
+          <img src="https://www.gob.pe/rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MTQ1MDAsInB1ciI6ImJsb2JfaWQifX0=--d56e8d89845af7a460ccbe0d65ed319826301586/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJwbmciLCJyZXNpemVfdG9fbGltaXQiOltudWxsLDQ4XX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--830247c4bafe7cadca50817d8559bf1a09e3aa28/Sin%20ti%CC%81tulo-1-01%20(1).png" 
+               alt="SENASA Logo" class="h-10">
+          <span class="text-xl font-semibold">Directorio de Técnicos</span>
+        </h1>
+        <div class="flex items-center space-x-4">
+          <span id="currentDate" class="text-sm hidden md:inline-block"></span>
+          <div>
+            <a href="/" class="text-white hover:text-blue-200 transition">
+              <i class="fas fa-home mr-1"></i>
+              <span class="hidden md:inline">Inicio</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation -->
+  <nav class="bg-white shadow-sm">
+    <div class="container mx-auto px-4">
+      <div class="flex space-x-8 overflow-x-auto">
+        <a href="/" class="nav-link">
+          <i class="fas fa-search mr-2"></i>Búsqueda
+        </a>
+        <a href="/estadisticas" class="nav-link">
+          <i class="fas fa-chart-bar mr-2"></i>Estadísticas
+        </a>
+        <a href="/tecnicos" class="nav-link active">
+          <i class="fas fa-users mr-2"></i>Técnicos
+        </a>
+        <a href="/reportes" class="nav-link">
+          <i class="fas fa-file-alt mr-2"></i>Reportes
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mx-auto px-4 py-8">
+    <!-- Search and Filters -->
+    <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+      <h2 class="text-xl font-semibold mb-4"><i class="fas fa-users mr-2"></i>Directorio de Técnicos</h2>
+      <p class="text-gray-600 mb-6">Encuentra la información de contacto de los técnicos de soporte de SENASA.</p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+        <div class="md:col-span-7 relative">
+          <input type="text" class="search-input" id="searchTech" placeholder="Buscar por nombre, área, especialidad...">
+        </div>
+        <div class="md:col-span-3">
+          <select class="filter-dropdown w-full" id="filterArea">
+            <option value="all">Todas las áreas</option>
+            <option value="infraestructura">Infraestructura</option>
+            <option value="software">Software</option>
+            <option value="redes">Redes</option>
+            <option value="help_desk">Help Desk</option>
+            <option value="sistemas">Sistemas</option>
+          </select>
+        </div>
+        <div class="md:col-span-2 search-button-container">
+          <button type="button" class="btn-search" id="searchButton">
+            <i class="fas fa-search mr-2"></i>Buscar
+          </button>
+          <button type="button" class="btn-search mt-2" id="refreshButton">
+            <i class="fas fa-sync-alt mr-2"></i>Actualizar
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Results -->
+    <div id="techResults" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Cargando -->
+      <div id="loading" class="col-span-full flex justify-center py-12">
+        <div class="loading-spinner"></div>
+      </div>
+      <!-- Los resultados se cargarán aquí -->
+    </div>
+  </div>
+  
+  <!-- Modal para editar técnico -->
+  <div id="techModal" class="modal">
+    <div class="modal-content">
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-xl font-bold">Editar Técnico</h3>
+          <button id="closeModal" class="text-gray-500 hover:text-gray-700">
+            <i class="fas fa-times text-xl"></i>
+          </button>
+        </div>
+        
+        <form id="techForm" class="space-y-4">
+          <input type="hidden" id="techId" name="id">
+          
+          <div>
+            <label class="block text-gray-700 font-semibold mb-1">Nombre</label>
+            <input type="text" id="techNombre" name="nombre" class="w-full border border-gray-300 rounded-md px-3 py-2" required>
+          </div>
+          
+          <div>
+            <label class="block text-gray-700 font-semibold mb-1">Cargo</label>
+            <input type="text" id="techCargo" name="cargo" class="w-full border border-gray-300 rounded-md px-3 py-2">
+          </div>
+          
+          <div>
+            <label class="block text-gray-700 font-semibold mb-1">Área</label>
+            <select id="techArea" name="area" class="w-full border border-gray-300 rounded-md px-3 py-2">
+              <option value="infraestructura">Infraestructura</option>
+              <option value="software">Software</option>
+              <option value="redes">Redes</option>
+              <option value="help_desk">Help Desk</option>
+              <option value="sistemas">Sistemas</option>
+            </select>
+          </div>
+          
+          <div>
+            <label class="block text-gray-700 font-semibold mb-1">Email</label>
+            <input type="email" id="techEmail" name="email" class="w-full border border-gray-300 rounded-md px-3 py-2" required>
+          </div>
+          
+          <div>
+            <label class="block text-gray-700 font-semibold mb-1">Teléfono</label>
+            <input type="text" id="techTelefono" name="telefono" class="w-full border border-gray-300 rounded-md px-3 py-2">
+          </div>
+          
+          <div>
+            <label class="block text-gray-700 font-semibold mb-1">Anexo</label>
+            <input type="text" id="techAnexo" name="anexo" class="w-full border border-gray-300 rounded-md px-3 py-2">
+          </div>
+          
+          <div>
+            <label class="block text-gray-700 font-semibold mb-1">WhatsApp</label>
+            <input type="text" id="techWhatsapp" name="whatsapp" class="w-full border border-gray-300 rounded-md px-3 py-2">
+          </div>
+          
+          <div>
+            <label class="block text-gray-700 font-semibold mb-1">Especialidades (separadas por coma)</label>
+            <input type="text" id="techEspecialidades" name="especialidades" class="w-full border border-gray-300 rounded-md px-3 py-2">
+          </div>
+          
+          <div>
+            <label class="block text-gray-700 font-semibold mb-1">Estado</label>
+            <select id="techEstado" name="estado" class="w-full border border-gray-300 rounded-md px-3 py-2">
+              <option value="disponible">Disponible</option>
+              <option value="ocupado">Ocupado</option>
+              <option value="ausente">Ausente</option>
+            </select>
+          </div>
+          
+          <div>
+            <label class="block text-gray-700 font-semibold mb-1">URL de Foto (opcional)</label>
+            <input type="text" id="techFoto" name="foto" class="w-full border border-gray-300 rounded-md px-3 py-2">
+          </div>
+          
+          <div class="flex justify-end pt-4">
+            <button type="button" id="cancelButton" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 mr-2">
+              Cancelar
+            </button>
+            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+              Guardar Cambios
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Scripts -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Establecer la fecha actual
+      const now = new Date();
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      const currentDateElement = document.getElementById('currentDate');
+      if (currentDateElement) {
+        currentDateElement.textContent = now.toLocaleDateString('es-ES', options);
+      }
+      
+      // Inicializar búsqueda y modal
+      initializeTechSearch();
+      initializeModal();
+      
+      // Verificar si existe un parámetro "buscar" en la URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const searchParam = urlParams.get('buscar');
+      
+      if (searchParam) {
+        const searchTechElement = document.getElementById('searchTech');
+        if (searchTechElement) {
+          searchTechElement.value = searchParam;
+        }
+        searchTechs(searchParam);
+      } else {
+        fetchTechs();
+      }
+      
+      // Evento para refrescar técnicos
+      const refreshButton = document.getElementById('refreshButton');
+      if (refreshButton) {
+        refreshButton.addEventListener('click', function() {
+          refreshTecnicos();
+        });
+      }
+    });
+    
+    function initializeTechSearch() {
+      // Configurar evento de búsqueda
+      const searchButton = document.getElementById('searchButton');
+      if (searchButton) {
+        searchButton.addEventListener('click', function() {
+          const searchTechElement = document.getElementById('searchTech');
+          const filterAreaElement = document.getElementById('filterArea');
+          if (searchTechElement && filterAreaElement) {
+            const query = searchTechElement.value.trim();
+            const area = filterAreaElement.value;
+            searchTechs(query, area);
+          }
+        });
+      }
+      
+      // Búsqueda al presionar Enter
+      const searchTechElement = document.getElementById('searchTech');
+      if (searchTechElement) {
+        searchTechElement.addEventListener('keyup', function(event) {
+          if (event.key === 'Enter') {
+            const filterAreaElement = document.getElementById('filterArea');
+            if (filterAreaElement) {
+              const query = this.value.trim();
+              const area = filterAreaElement.value;
+              searchTechs(query, area);
+            }
+          }
+        });
+      }
+    }
+    
+    function initializeModal() {
+      // Referencias al modal y sus elementos
+      const modal = document.getElementById('techModal');
+      const closeModalBtn = document.getElementById('closeModal');
+      const cancelBtn = document.getElementById('cancelButton');
+      const techForm = document.getElementById('techForm');
+      
+      if (!modal || !closeModalBtn || !cancelBtn || !techForm) {
+        console.error('No se encontraron elementos del modal necesarios');
+        return;
+      }
+      
+      // Cerrar modal
+      closeModalBtn.addEventListener('click', function() {
+        modal.classList.remove('active');
+      });
+      cancelBtn.addEventListener('click', function() {
+        modal.classList.remove('active');
+      });
+      
+      // Manejar envío del formulario
+      techForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const techIdElement = document.getElementById('techId');
+        if (!techIdElement) return;
+        
+        const techId = techIdElement.value;
+        
+        // Recopilar datos del formulario con verificaciones
+        const elements = {
+          nombre: document.getElementById('techNombre'),
+          cargo: document.getElementById('techCargo'),
+          area: document.getElementById('techArea'),
+          email: document.getElementById('techEmail'),
+          telefono: document.getElementById('techTelefono'),
+          anexo: document.getElementById('techAnexo'),
+          whatsapp: document.getElementById('techWhatsapp'),
+          especialidades: document.getElementById('techEspecialidades'),
+          estado: document.getElementById('techEstado'),
+          foto: document.getElementById('techFoto')
+        };
+        
+        for (const key in elements) {
+          if (!elements[key]) {
+            console.error(`Elemento no encontrado: tech${key.charAt(0).toUpperCase() + key.slice(1)}`);
+            return;
+          }
+        }
+        
+        const formData = {
+          nombre: elements.nombre.value,
+          cargo: elements.cargo.value,
+          area: elements.area.value,
+          email: elements.email.value,
+          telefono: elements.telefono.value,
+          anexo: elements.anexo.value,
+          whatsapp: elements.whatsapp.value,
+          especialidades: elements.especialidades.value.split(',').map(item => item.trim()).filter(item => item !== ''),
+          estado: elements.estado.value,
+          foto: elements.foto.value
+        };
+        
+        updateTechData(techId, formData);
+      });
+    }
+    
+    function fetchTechs() {
+      const loadingElement = document.getElementById('loading');
+      if (loadingElement) {
+        loadingElement.style.display = 'flex';
+      }
+      
+      fetch('/api/tecnicos')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Error al obtener técnicos');
+          }
+          return response.json();
+        })
+        .then(data => {
+          renderTechs(data.tecnicos);
+          if (loadingElement) {
+            loadingElement.style.display = 'none';
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          const techResultsElement = document.getElementById('techResults');
+          if (techResultsElement) {
+            techResultsElement.innerHTML = `
+              <div class="col-span-full bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
+                <p class="font-bold">Error</p>
+                <p>No se pudieron cargar los técnicos. Por favor, intenta nuevamente.</p>
+              </div>
+            `;
+          }
+          if (loadingElement) {
+            loadingElement.style.display = 'none';
+          }
+        });
+    }
+    
+    function searchTechs(query, area = 'all') {
+      const loadingElement = document.getElementById('loading');
+      const techResultsElement = document.getElementById('techResults');
+      
+      if (loadingElement) {
+        loadingElement.style.display = 'flex';
+      }
+      if (techResultsElement) {
+        techResultsElement.innerHTML = '';
+      }
+      
+      let url = '/api/tecnicos?';
+      if (query) {
+        url += `q=${encodeURIComponent(query)}&`;
+      }
+      if (area && area !== 'all') {
+        url += `area=${encodeURIComponent(area)}`;
+      }
+      
+      fetch(url)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Error al buscar técnicos');
+          }
+          return response.json();
+        })
+        .then(data => {
+          renderTechs(data.tecnicos);
+          if (loadingElement) {
+            loadingElement.style.display = 'none';
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          if (techResultsElement) {
+            techResultsElement.innerHTML = `
+              <div class="col-span-full bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
+                <p class="font-bold">Error</p>
+                <p>No se pudieron cargar los técnicos. Por favor, intenta nuevamente.</p>
+              </div>
+            `;
+          }
+          if (loadingElement) {
+            loadingElement.style.display = 'none';
+          }
+        });
+    }
+    
+    function refreshTecnicos() {
+      const loadingElement = document.getElementById('loading');
+      const techResultsElement = document.getElementById('techResults');
+      
+      if (loadingElement) {
+        loadingElement.style.display = 'flex';
+      }
+      if (techResultsElement) {
+        techResultsElement.innerHTML = '';
+      }
+      
+      fetch('/api/tecnicos/refresh', { method: 'POST' })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Error al refrescar técnicos');
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (data.success) {
+            fetchTechs();
+          } else {
+            throw new Error(data.message || 'Error al refrescar técnicos');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          if (techResultsElement) {
+            techResultsElement.innerHTML = `
+              <div class="col-span-full bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
+                <p class="font-bold">Error</p>
+                <p>No se pudieron refrescar los técnicos. Por favor, intenta nuevamente.</p>
+              </div>
+            `;
+          }
+          if (loadingElement) {
+            loadingElement.style.display = 'none';
+          }
+        });
+    }
+    
+    function updateTechData(techId, formData) {
+      const modal = document.getElementById('techModal');
+      if (!modal) return;
+      
+      const submitButton = modal.querySelector('button[type="submit"]');
+      if (submitButton) {
+        submitButton.textContent = 'Guardando...';
+        submitButton.disabled = true;
+      }
+      
+      fetch(`/api/tecnicos/${techId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Error al actualizar técnico');
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (data.success) {
+            modal.classList.remove('active');
+            fetchTechs();
+            alert('Técnico actualizado correctamente');
+          } else {
+            throw new Error(data.message || 'Error al actualizar técnico');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('Error al actualizar técnico. Por favor, intenta nuevamente.');
+        })
+        .finally(() => {
+          if (submitButton) {
+            submitButton.textContent = 'Guardar Cambios';
+            submitButton.disabled = false;
+          }
+        });
+    }
+    
+    function editTech(techId) {
+      const techCard = document.querySelector(`[data-id="${techId}"]`);
+      if (!techCard) return;
+      
+      const tech = {
+        id: techId,
+        nombre: techCard.getAttribute('data-nombre'),
+        cargo: techCard.getAttribute('data-cargo'),
+        area: techCard.getAttribute('data-area'),
+        email: techCard.getAttribute('data-email'),
+        telefono: techCard.getAttribute('data-telefono'),
+        anexo: techCard.getAttribute('data-anexo'),
+        whatsapp: techCard.getAttribute('data-whatsapp'),
+        especialidades: techCard.getAttribute('data-especialidades'),
+        estado: techCard.getAttribute('data-estado'),
+        foto: techCard.getAttribute('data-foto')
+      };
+      
+      const elements = {
+        id: document.getElementById('techId'),
+        nombre: document.getElementById('techNombre'),
+        cargo: document.getElementById('techCargo'),
+        area: document.getElementById('techArea'),
+        email: document.getElementById('techEmail'),
+        telefono: document.getElementById('techTelefono'),
+        anexo: document.getElementById('techAnexo'),
+        whatsapp: document.getElementById('techWhatsapp'),
+        especialidades: document.getElementById('techEspecialidades'),
+        estado: document.getElementById('techEstado'),
+        foto: document.getElementById('techFoto')
+      };
+      
+      for (const key in elements) {
+        if (!elements[key]) {
+          console.error(`Elemento no encontrado: tech${key.charAt(0).toUpperCase() + key.slice(1)}`);
+          return;
+        }
+      }
+      
+      elements.id.value = tech.id;
+      elements.nombre.value = tech.nombre || '';
+      elements.cargo.value = tech.cargo || '';
+      elements.area.value = tech.area || 'sistemas';
+      elements.email.value = tech.email || '';
+      elements.telefono.value = tech.telefono || '';
+      elements.anexo.value = tech.anexo || '';
+      elements.whatsapp.value = tech.whatsapp || '';
+      
+      try {
+        const especialidades = JSON.parse(tech.especialidades || '[]');
+        elements.especialidades.value = especialidades.join(', ');
+      } catch (e) {
+        elements.especialidades.value = '';
+      }
+      
+      elements.estado.value = tech.estado || 'disponible';
+      elements.foto.value = tech.foto || '';
+      
+      const modal = document.getElementById('techModal');
+      if (modal) {
+        modal.classList.add('active');
+      }
+    }
+    
+    function renderTechs(techs) {
+      const container = document.getElementById('techResults');
+      if (!container) {
+        console.error('Elemento techResults no encontrado');
+        return;
+      }
+      
+      if (!techs || techs.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full text-center py-12">
+            <i class="fas fa-user-slash text-5xl text-gray-300 mb-4"></i>
+            <h3 class="text-xl font-medium text-gray-600 mb-2">No se encontraron técnicos</h3>
+            <p class="text-gray-500">Intenta con otros criterios de búsqueda</p>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = '';
+      
+      techs.forEach((tech, index) => {
+        let estadoClass = 'bg-gray-200 text-gray-700';
+        let estadoIcon = 'fa-circle';
+        
+        switch (tech.estado) {
+          case 'disponible':
+            estadoClass = 'bg-green-500 text-white';
+            estadoIcon = 'fa-check-circle';
+            break;
+          case 'ocupado':
+            estadoClass = 'bg-yellow-500 text-white';
+            estadoIcon = 'fa-clock';
+            break;
+          case 'ausente':
+            estadoClass = 'bg-red-500 text-white';
+            estadoIcon = 'fa-times-circle';
+            break;
+        }
+        
+        const techCard = document.createElement('div');
+        techCard.className = 'tech-card animate__animated animate__fadeIn';
+        techCard.style.animationDelay = `${index * 0.1}s`;
+        
+        techCard.setAttribute('data-id', tech.id);
+        techCard.setAttribute('data-nombre', tech.nombre || '');
+        techCard.setAttribute('data-cargo', tech.cargo || '');
+        techCard.setAttribute('data-area', tech.area || '');
+        techCard.setAttribute('data-email', tech.email || '');
+        techCard.setAttribute('data-telefono', tech.telefono || '');
+        techCard.setAttribute('data-anexo', tech.anexo || '');
+        techCard.setAttribute('data-whatsapp', tech.whatsapp || '');
+        techCard.setAttribute('data-especialidades', JSON.stringify(tech.especialidades || []));
+        techCard.setAttribute('data-estado', tech.estado || '');
+        techCard.setAttribute('data-foto', tech.foto || '');
+        
+        let avatarHtml = '';
+        if (tech.foto && tech.foto.trim() !== '') {
+          avatarHtml = `<img src="${tech.foto}" alt="${tech.nombre}" class="avatar">`;
+        } else {
+          const iniciales = tech.nombre ? tech.nombre.split(' ').map(n => n.charAt(0)).slice(0, 2).join('') : '';
+          avatarHtml = `<div class="avatar-placeholder">${iniciales}</div>`;
+        }
+        
+        let especialidadesHtml = '';
+        if (tech.especialidades && tech.especialidades.length > 0) {
+          especialidadesHtml = tech.especialidades.map(esp => 
+            `<span class="badge badge-secondary">${esp}</span>`
+          ).join('');
+        } else {
+          especialidadesHtml = '<span class="text-gray-400">Sin especialidades asignadas</span>';
+        }
+        
+        techCard.innerHTML = `
+          <div class="tech-header">
+            <div class="flex items-center">
+              ${avatarHtml}
+              <div class="ml-4">
+                <h3 class="text-xl font-bold">${tech.nombre || 'Sin nombre'}</h3>
+                <p class="text-blue-100">${tech.cargo || 'Técnico de Soporte'}</p>
+                <div class="mt-2">
+                  <span class="badge ${estadoClass}">
+                    <i class="fas ${estadoIcon} mr-1"></i>
+                    ${capitalizeFirstLetter(tech.estado || 'disponible')}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="p-5">
+            <div class="mb-4">
+              <h4 class="text-lg font-semibold mb-2">Especialidades</h4>
+              <div class="flex flex-wrap gap-2">
+                ${especialidadesHtml}
+              </div>
+            </div>
+            
+            <h4 class="text-lg font-semibold mb-2">Información de Contacto</h4>
+            
+            <div class="contact-item">
+              <div class="contact-icon bg-blue-100 text-blue-600">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div>
+                <p class="font-medium">${tech.email || 'No disponible'}</p>
+                <p class="text-sm text-gray-500">Correo electrónico</p>
+              </div>
+            </div>
+            
+            <div class="contact-item">
+              <div class="contact-icon bg-purple-100 text-purple-600">
+                <i class="fas fa-phone-alt"></i>
+              </div>
+              <div>
+                <p class="font-medium">${tech.telefono || 'No disponible'}</p>
+                <p class="text-sm text-gray-500">Teléfono</p>
+              </div>
+            </div>
+            
+            <div class="contact-item">
+              <div class="contact-icon bg-indigo-100 text-indigo-600">
+                <i class="fas fa-phone"></i>
+              </div>
+              <div>
+                <p class="font-medium">${tech.anexo ? `Anexo ${tech.anexo}` : 'No disponible'}</p>
+                <p class="text-sm text-gray-500">Anexo oficina</p>
+              </div>
+            </div>
+            
+            <div class="contact-item">
+              <div class="contact-icon bg-green-100 text-green-600">
+                <i class="fab fa-whatsapp"></i>
+              </div>
+              <div>
+                <p class="font-medium">${tech.whatsapp || 'No disponible'}</p>
+                <p class="text-sm text-gray-500">WhatsApp</p>
+              </div>
+            </div>
+            
+            <div class="mt-4 flex flex-wrap justify-end gap-2">
+              <button onclick="editTech(${tech.id})" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                <i class="fas fa-edit mr-2"></i>Editar
+              </button>
+              ${tech.email ? 
+                `<a href="mailto:${tech.email}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                  <i class="fas fa-envelope mr-2"></i>Email
+                </a>` : ''
+              }
+              ${tech.whatsapp ? 
+                `<a href="https://wa.me/${tech.whatsapp.replace(/\D/g, '')}" target="_blank" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                  <i class="fab fa-whatsapp mr-2"></i>WhatsApp
+                </a>` : ''
+              }
+            </div>
+          </div>
+        `;
+        
+        container.appendChild(techCard);
+      });
+    }
+    
+    function normalizeString(str) {
+      if (!str) return '';
+      return String(str).toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
+    }
+    
+    function capitalizeFirstLetter(string) {
+      if (!string) return '';
+      return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+    
+    // Exponer la función para editar técnico globalmente
+    window.editTech = editTech;
+  </script>
+</body>
+</html>

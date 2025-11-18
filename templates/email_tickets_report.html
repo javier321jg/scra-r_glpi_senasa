@@ -1,0 +1,342 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="x-apple-disable-message-reformatting" />
+    <title>Reporte de Tickets en Curso - SENASA</title>
+    <!--[if mso]>
+    <xml>
+        <o:OfficeDocumentSettings>
+            <o:AllowPNG/>
+            <o:PixelsPerInch>96</o:PixelsPerInch>
+        </o:OfficeDocumentSettings>
+    </xml>
+    <style>
+        table {border-collapse: collapse;}
+        td,th,div,p,a,h1,h2,h3,h4,h5,h6 {font-family: "Segoe UI", sans-serif; mso-line-height-rule: exactly;}
+        v\:* {behavior:url(#default#VML);}
+    </style>
+    <![endif]-->
+    <style type="text/css">
+        /* Resetear estilos */
+        body, table, td, p, a, li, blockquote {
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }
+        
+        body {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+        }
+        
+        /* Evitar el salto de escala en dispositivos móviles */
+        @media only screen and (max-width: 700px) {
+            .email-container {
+                width: 100% !important;
+            }
+        }
+    </style>
+</head>
+<body bgcolor="#f0f4fa" style="margin: 0; padding: 0; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; width: 100%; background-color: #f0f4fa;">
+    <!-- Preheader text : Mantiene el texto corto -->
+    <div style="display: none; font-size: 1px; line-height: 1px; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden; mso-hide: all; font-family: sans-serif;">
+        Reporte de Tickets en Curso - SENASA - {{ fecha_actual }}
+    </div>
+    
+    <center style="width: 100%; background-color: #f0f4fa; padding: 20px 0;">
+        <!-- Container principal - AMPLIADO A 700px -->
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" width="700" style="margin: auto; background-color: #ffffff; border-spacing: 0 !important; border-collapse: collapse !important; mso-table-lspace: 0pt !important; mso-table-rspace: 0pt !important; border: 1px solid #e0e0e0; box-shadow: 0 3px 10px rgba(0,0,0,0.1);">
+            <tr>
+                <td style="padding: 0;">
+                    <!-- Barra superior decorativa -->
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border-collapse: collapse !important;">
+                        <tr>
+                            <td bgcolor="#1e3a8a" style="background-color: #1e3a8a !important; height: 5px; font-size: 1px; line-height: 5px;" height="5">&nbsp;</td>
+                        </tr>
+                    </table>
+                
+                    <!-- Logo SENASA -->
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border-collapse: collapse !important;">
+                        <tr>
+                            <td align="center" style="padding: 25px 0 15px 0; background-color: #ffffff;">
+                                <img src="https://www.gob.pe/rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MTQ1MDAsInB1ciI6ImJsb2JfaWQifX0=--d56e8d89845af7a460ccbe0d65ed319826301586/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJwbmciLCJyZXNpemVfdG9fbGltaXQiOltudWxsLDQ4XX0sInB1ciI6InZhcmlhdGlvbiJ9fQ==--830247c4bafe7cadca50817d8559bf1a09e3aa28/Sin%20ti%CC%81tulo-1-01%20(1).png" alt="SENASA Logo" width="200" height="auto" style="display: block; border: 0; height: auto; width: 200px; margin: 0 auto;" />
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    <!-- Banner azul con título -->
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border-collapse: collapse !important;">
+                        <tr>
+                            <td align="center" bgcolor="#1e3a8a" style="padding: 25px; text-align: center; background-color: #1e3a8a !important;">
+                                <h1 style="margin: 0; font-family: Arial, sans-serif; font-size: 28px; font-weight: bold; color: #ffffff !important; letter-spacing: 0.5px;">Reporte de Tickets en Curso</h1>
+                                <p style="margin: 10px 0 0; font-family: Arial, sans-serif; font-size: 16px; color: #ffffff !important;">Servicio Nacional de Sanidad Agraria - SENASA</p>
+                                <p style="margin: 5px 0 0; font-family: Arial, sans-serif; font-size: 14px; color: #ffffff !important;">Fecha: {{ fecha_actual }}</p>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    <!-- Estadísticas en fila con ICONOS MODERNOS -->
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border-collapse: collapse !important;">
+                        <tr>
+                            <td style="padding: 25px 20px;">
+                                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border-collapse: collapse !important;">
+                                    <tr>
+                                        <!-- Columna 1: Tickets con icono moderno -->
+                                        <td width="33.33%" align="center" style="vertical-align: top; padding: 0 10px;">
+                                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border-collapse: collapse !important; background-color: #ffffff; border: 1px solid #eaeef8;">
+                                                <tr>
+                                                    <td align="center" style="padding: 20px 15px 15px 15px;">
+                                                        <img src="https://img.icons8.com/fluency/64/000000/ticket.png" alt="Tickets" width="64" height="64" style="display: block; border: 0; margin-bottom: 10px;" />
+                                                        <p style="margin: 10px 0 0; font-family: Arial, sans-serif; font-size: 36px; font-weight: bold; color: #1e3a8a; line-height: 1.2;">{{ total_tickets }}</p>
+                                                        <p style="margin: 5px 0 0; font-family: Arial, sans-serif; font-size: 14px; color: #666666; text-transform: uppercase; letter-spacing: 0.5px;">TOTAL DE TICKETS</p>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                        
+                                        <!-- Columna 2: Técnicos con icono moderno -->
+                                        <td width="33.33%" align="center" style="vertical-align: top; padding: 0 10px;">
+                                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border-collapse: collapse !important; background-color: #ffffff; border: 1px solid #eaeef8;">
+                                                <tr>
+                                                    <td align="center" style="padding: 20px 15px 15px 15px;">
+                                                        <img src="https://img.icons8.com/fluency/64/000000/conference-call.png" alt="Técnicos" width="64" height="64" style="display: block; border: 0; margin-bottom: 10px;" />
+                                                        <p style="margin: 10px 0 0; font-family: Arial, sans-serif; font-size: 36px; font-weight: bold; color: #1e3a8a; line-height: 1.2;">{{ total_tecnicos }}</p>
+                                                        <p style="margin: 5px 0 0; font-family: Arial, sans-serif; font-size: 14px; color: #666666; text-transform: uppercase; letter-spacing: 0.5px;">TÉCNICOS</p>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                        
+                                        <!-- Columna 3: Mes con icono moderno -->
+                                        <td width="33.33%" align="center" style="vertical-align: top; padding: 0 10px;">
+                                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border-collapse: collapse !important; background-color: #ffffff; border: 1px solid #f0f0f0;">
+                                                <tr>
+                                                    <td align="center" style="padding: 25px 15px;">
+                                                        <img src="https://img.icons8.com/ios-filled/50/84cc16/calendar.png" alt="Calendario" width="50" height="50" style="display: block; border: 0; margin-bottom: 15px;" />
+                                                        <p style="margin: 0; font-family: Arial, sans-serif; font-size: 28px; font-weight: bold; color: #1e3a8a; line-height: 1.2;">{{ ultimo_mes }}</p>
+                                                        <p style="margin: 5px 0 0; font-family: Arial, sans-serif; font-size: 14px; color: #666666; text-transform: uppercase; letter-spacing: 0.5px;">ÚLTIMO MES</p>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    <!-- Título de la tabla con icono -->
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border-collapse: collapse !important;">
+                        <tr>
+                            <td style="padding: 0 20px 15px 20px;">
+                                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border-collapse: collapse !important;">
+                                    <tr>
+                                        <td width="24" valign="middle">
+                                            <img src="https://img.icons8.com/ios-filled/24/1e3a8a/data-sheet.png" alt="Distribución" width="24" height="24" style="display: block; border: 0;" />
+                                        </td>
+                                        <td valign="middle" style="padding-left: 10px;">
+                                            <h2 style="margin: 0; font-family: Arial, sans-serif; font-size: 20px; font-weight: bold; color: #333333;">Distribución de Tickets por Técnico</h2>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    <!-- Tabla de tickets con indicadores circulares -->
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border-collapse: collapse !important;">
+                        <tr>
+                            <td style="padding: 0 20px 30px 20px;">
+                                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border-collapse: collapse !important; border: 1px solid #e0e0e0;">
+                                    <!-- Encabezado de tabla -->
+                                    <tr>
+                                        <td bgcolor="#1e3a8a" style="background-color: #1e3a8a !important; color: white; padding: 12px; text-align: left; font-family: Arial, sans-serif; font-size: 13px; font-weight: 600; text-transform: uppercase; border: 1px solid #1e3a8a;">
+                                            TÉCNICO
+                                        </td>
+                                        
+                                        <!-- Meses dinámicos -->
+                                        {% for month in months %}
+                                        <td width="16%" bgcolor="#1e3a8a" style="background-color: #1e3a8a !important; color: white; padding: 12px; text-align: center; font-family: Arial, sans-serif; font-size: 13px; font-weight: 600; text-transform: uppercase; border: 1px solid #1e3a8a;">
+                                            {{ month }}
+                                        </td>
+                                        {% endfor %}
+                                        
+                                        <td width="16%" bgcolor="#1e3a8a" style="background-color: #1e3a8a !important; color: white; padding: 12px; text-align: center; font-family: Arial, sans-serif; font-size: 13px; font-weight: 600; text-transform: uppercase; border: 1px solid #1e3a8a;">
+                                            TOTAL
+                                        </td>
+                                    </tr>
+                                    
+                                    <!-- Filas de técnicos -->
+                                    {% for tecnico in technicians %}
+                                    <tr style="{% if loop.index is divisibleby(2) %}background-color: #f8faff;{% else %}background-color: #ffffff;{% endif %}">
+                                        <!-- Columna de técnico con icono -->
+                                        <td style="padding: 10px; border: 1px solid #e0e0e0; text-align: left;">
+                                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border-collapse: collapse !important;">
+                                                <tr>
+                                                    <td width="36" valign="middle">
+                                                        <!--[if mso]>
+                                                        <v:oval xmlns:v="urn:schemas-microsoft-com:vml" style="width:36px;height:36px;" fillcolor="#1e40af" strokecolor="#1e40af">
+                                                        <v:textbox inset="0,0,0,0" style="v-text-anchor:middle;">
+                                                        <center style="color:#ffffff; font-family:Arial,sans-serif; font-size:15px; font-weight:bold;">T</center>
+                                                        </v:textbox>
+                                                        </v:oval>
+                                                        <![endif]-->
+                                                        <!--[if !mso]><!-->
+                                                        <div style="width: 36px; height: 36px; border-radius: 50%; background-color: #1e40af; color: #ffffff; font-size: 15px; font-weight: bold; line-height: 36px; text-align: center;">T</div>
+                                                        <!--<![endif]-->
+                                                    </td>
+                                                    <td valign="middle" style="font-family: Arial, sans-serif; font-weight: 500; color: #333333; font-size: 14px; padding-left: 10px;">
+                                                        {{ tecnico.nombre }}
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                        
+                                        <!-- Columnas de meses -->
+                                        {% for month in all_months %}
+                                        <td align="center" style="padding: 10px; border: 1px solid #e0e0e0;">
+                                            {% set count = tecnico.months[month]|default(0) %}
+                                            {% if count == 0 %}
+                                            <!-- Indicador gris para cero -->
+                                            <!--[if mso]>
+                                            <v:oval xmlns:v="urn:schemas-microsoft-com:vml" style="width:36px;height:36px;" fillcolor="#e2e8f0" strokecolor="#e2e8f0">
+                                            <v:textbox inset="0,0,0,0" style="v-text-anchor:middle;">
+                                            <center style="color:#64748b; font-family:Arial,sans-serif; font-size:14px; font-weight:bold;">0</center>
+                                            </v:textbox>
+                                            </v:oval>
+                                            <![endif]-->
+                                            <!--[if !mso]><!-->
+                                            <div style="display: inline-block; width: 36px; height: 36px; border-radius: 50%; background-color: #e2e8f0; color: #64748b; font-size: 14px; font-weight: bold; line-height: 36px; text-align: center;">0</div>
+                                            <!--<![endif]-->
+                                            {% elif count < 5 %}
+                                            <!-- Indicador verde para menos de 5 -->
+                                            <!--[if mso]>
+                                            <v:oval xmlns:v="urn:schemas-microsoft-com:vml" style="width:36px;height:36px;" fillcolor="#2ed573" strokecolor="#2ed573">
+                                            <v:textbox inset="0,0,0,0" style="v-text-anchor:middle;">
+                                            <center style="color:#004d28; font-family:Arial,sans-serif; font-size:14px; font-weight:bold;">{{ count }}</center>
+                                            </v:textbox>
+                                            </v:oval>
+                                            <![endif]-->
+                                            <!--[if !mso]><!-->
+                                            <div style="display: inline-block; width: 36px; height: 36px; border-radius: 50%; background-color: #2ed573; color: #004d28; font-size: 14px; font-weight: bold; line-height: 36px; text-align: center;">{{ count }}</div>
+                                            <!--<![endif]-->
+                                            {% elif count < 15 %}
+                                            <!-- Indicador amarillo para menos de 15 -->
+                                            <!--[if mso]>
+                                            <v:oval xmlns:v="urn:schemas-microsoft-com:vml" style="width:36px;height:36px;" fillcolor="#ffbd35" strokecolor="#ffbd35">
+                                            <v:textbox inset="0,0,0,0" style="v-text-anchor:middle;">
+                                            <center style="color:#7d5700; font-family:Arial,sans-serif; font-size:14px; font-weight:bold;">{{ count }}</center>
+                                            </v:textbox>
+                                            </v:oval>
+                                            <![endif]-->
+                                            <!--[if !mso]><!-->
+                                            <div style="display: inline-block; width: 36px; height: 36px; border-radius: 50%; background-color: #ffbd35; color: #7d5700; font-size: 14px; font-weight: bold; line-height: 36px; text-align: center;">{{ count }}</div>
+                                            <!--<![endif]-->
+                                            {% else %}
+                                            <!-- Indicador rojo para 15 o más -->
+                                            <!--[if mso]>
+                                            <v:oval xmlns:v="urn:schemas-microsoft-com:vml" style="width:36px;height:36px;" fillcolor="#ff4757" strokecolor="#ff4757">
+                                            <v:textbox inset="0,0,0,0" style="v-text-anchor:middle;">
+                                            <center style="color:#ffffff; font-family:Arial,sans-serif; font-size:14px; font-weight:bold;">{{ count }}</center>
+                                            </v:textbox>
+                                            </v:oval>
+                                            <![endif]-->
+                                            <!--[if !mso]><!-->
+                                            <div style="display: inline-block; width: 36px; height: 36px; border-radius: 50%; background-color: #ff4757; color: #ffffff; font-size: 14px; font-weight: bold; line-height: 36px; text-align: center;">{{ count }}</div>
+                                            <!--<![endif]-->
+                                            {% endif %}
+                                        </td>
+                                        {% endfor %}
+                                        
+                                        <!-- Columna total -->
+                                        <td align="center" style="padding: 10px; border: 1px solid #e0e0e0;">
+                                            <!--[if mso]>
+                                            <v:oval xmlns:v="urn:schemas-microsoft-com:vml" style="width:36px;height:36px;" fillcolor="#1e40af" strokecolor="#1e40af">
+                                            <v:textbox inset="0,0,0,0" style="v-text-anchor:middle;">
+                                            <center style="color:#ffffff; font-family:Arial,sans-serif; font-size:14px; font-weight:bold;">{{ tecnico.total }}</center>
+                                            </v:textbox>
+                                            </v:oval>
+                                            <![endif]-->
+                                            <!--[if !mso]><!-->
+                                            <div style="display: inline-block; width: 36px; height: 36px; border-radius: 50%; background-color: #1e40af; color: #ffffff; font-size: 14px; font-weight: bold; line-height: 36px; text-align: center;">{{ tecnico.total }}</div>
+                                            <!--<![endif]-->
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    
+                                    <!-- Fila de total general -->
+                                    <tr>
+                                        <td bgcolor="#1e3a8a" style="background-color: #1e3a8a !important; color: white; padding: 12px; text-align: left; font-family: Arial, sans-serif; font-weight: 600; font-size: 14px; border: 1px solid #1e3a8a;">
+                                            Total General
+                                        </td>
+                                        
+                                        {% for month in all_months %}
+                                        <td width="16%" align="center" bgcolor="#1e3a8a" style="background-color: #1e3a8a !important; color: white; padding: 12px; font-family: Arial, sans-serif; font-weight: 600; font-size: 14px; border: 1px solid #1e3a8a; text-align: center;">
+                                            {{ month_totals[month]|default(0) }}
+                                        </td>
+                                        {% endfor %}
+                                        
+                                        <td width="16%" align="center" bgcolor="#1e3a8a" style="background-color: #1e3a8a !important; color: white; padding: 12px; font-family: Arial, sans-serif; font-weight: 700; font-size: 14px; border: 1px solid #1e3a8a; text-align: center;">
+                                            {{ grand_total }}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    <!-- Mensaje Automático con icono -->
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border-collapse: collapse !important;">
+                        <tr>
+                            <td style="padding: 0 20px 20px 20px; border-top: 1px solid #e0e0e0;">
+                                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border-collapse: collapse !important; margin-top: 20px;">
+                                    <tr>
+                                        <td width="24" valign="top">
+                                            <img src="https://img.icons8.com/material-rounded/24/999999/info.png" alt="Info" width="24" height="24" style="display: block; border: 0;" />
+                                        </td>
+                                        <td valign="top" style="padding-left: 10px;">
+                                            <p style="margin: 0; font-family: Arial, sans-serif; font-size: 13px; color: #666666; font-style: italic;">Este es un mensaje automático, por favor no responda a este correo.</p>
+                                        </td>
+                                    </tr>
+                                </table>
+                                
+                                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border-collapse: collapse !important; margin-top: 15px;">
+                                    <tr>
+                                        <td width="42" valign="top">
+                                            <img src="https://img.icons8.com/color/40/000000/technical-support.png" alt="Soporte" width="40" height="40" style="display: block; border: 0;" />
+                                        </td>
+                                        <td valign="middle" style="padding-left: 10px;">
+                                            <p style="margin: 0; font-family: Arial, sans-serif; font-size: 13px; color: #333333;">Atentamente,</p>
+                                            <p style="margin: 5px 0 0; font-family: Arial, sans-serif; font-size: 15px; color: #1e3a8a; font-weight: bold;">Monitoreo MDA</p>
+                                            <p style="margin: 3px 0 0; font-family: Arial, sans-serif; font-size: 13px; color: #666666;">Unidad de Informática y Estadística</p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    <!-- Footer con iconos sociales -->
+                    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="border-collapse: collapse !important;">
+                        <tr>
+                            <td bgcolor="#1e3a8a" style="background-color: #1e3a8a !important; padding: 20px; text-align: center;">
+                                <p style="margin: 0 0 10px 0; font-family: Arial, sans-serif; font-size: 12px; color: #ffffff !important;">Servicio Nacional de Sanidad Agraria - Sistema de Seguimiento de Tickets</p>
+                                
+                                <!-- Iconos sociales -->
+                                <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" style="border-collapse: collapse !important; margin: 10px auto;">
+                                    
+                                </table>
+                                
+                                <p style="margin: 10px 0 0 0; font-family: Arial, sans-serif; font-size: 11px; color: #ffffff !important; opacity: 0.8;">&copy; 2025 SENASA - Todos los derechos reservados</p>
+                                <p style="margin: 5px 0 0; font-family: Arial, sans-serif; font-size: 11px; color: #ffffff !important; opacity: 0.8;">Generado el {{ fecha_actual }} a las {{ hora_actual }}</p>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </center>
+</body>
+</html>

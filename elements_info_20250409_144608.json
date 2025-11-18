@@ -1,0 +1,422 @@
+{
+  "select_mode_mode_-- 请选择 --\n": {
+    "id": "mode",
+    "isVisible": true,
+    "name": "mode",
+    "tag": "select",
+    "text": "-- 请选择 --\n                    ",
+    "type": "select-one",
+    "value": "",
+    "xpath": "//*[@id=\"mode\"]"
+  },
+  "select_countryCode_countryCode_-- Select ": {
+    "id": "countryCode",
+    "isVisible": false,
+    "name": "countryCode",
+    "tag": "select",
+    "text": "-- Select --[LBR]利比里亚 Liberia[",
+    "type": "select-one",
+    "value": "",
+    "xpath": "//*[@id=\"countryCode\"]"
+  },
+  "button___-- Select ": {
+    "id": "",
+    "isVisible": true,
+    "name": "",
+    "tag": "button",
+    "text": "-- Select --",
+    "type": "button",
+    "value": "",
+    "xpath": "//*[@id=\"dec_query_form\"]/table[1]/tbody[1]/tr[2]/td[2]/div[1]/div[1]/button[1]"
+  },
+  "input___": {
+    "id": "",
+    "isVisible": false,
+    "name": "",
+    "tag": "input",
+    "text": "",
+    "type": "text",
+    "value": "",
+    "xpath": "//*[@id=\"dec_query_form\"]/table[1]/tbody[1]/tr[2]/td[2]/div[1]/div[1]/div[1]/div[1]/input[1]"
+  },
+  "a___-- Select ": {
+    "id": "",
+    "isVisible": false,
+    "name": "",
+    "tag": "a",
+    "text": "-- Select --",
+    "type": "",
+    "value": "",
+    "xpath": "//*[@id=\"dec_query_form\"]/table[1]/tbody[1]/tr[2]/td[2]/div[1]/div[1]/div[1]/ul[1]/li[1]/a[1]"
+  },
+  "select_provinceCode_provinceCode_--Select c": {
+    "id": "provinceCode",
+    "isVisible": false,
+    "name": "provinceCode",
+    "tag": "select",
+    "text": "--Select country first--",
+    "type": "select-one",
+    "value": "",
+    "xpath": "//*[@id=\"provinceCode\"]"
+  },
+  "button___--Select c": {
+    "id": "",
+    "isVisible": true,
+    "name": "",
+    "tag": "button",
+    "text": "--Select country first--",
+    "type": "button",
+    "value": "",
+    "xpath": "//*[@id=\"dec_query_form\"]/table[1]/tbody[1]/tr[2]/td[4]/div[1]/div[1]/button[1]"
+  },
+  "a___--Select c": {
+    "id": "",
+    "isVisible": false,
+    "name": "",
+    "tag": "a",
+    "text": "--Select country first--",
+    "type": "",
+    "value": "",
+    "xpath": "//*[@id=\"dec_query_form\"]/table[1]/tbody[1]/tr[2]/td[4]/div[1]/div[1]/div[1]/ul[1]/li[1]/a[1]"
+  },
+  "input_overseasOfficialRegNo_overseasOfficialRegNo_": {
+    "id": "overseasOfficialRegNo",
+    "isVisible": true,
+    "name": "overseasOfficialRegNo",
+    "tag": "input",
+    "text": "",
+    "type": "text",
+    "value": "",
+    "xpath": "//*[@id=\"overseasOfficialRegNo\"]"
+  },
+  "input_chinaRegNo_chinaRegNo_": {
+    "id": "chinaRegNo",
+    "isVisible": true,
+    "name": "chinaRegNo",
+    "tag": "input",
+    "text": "",
+    "type": "text",
+    "value": "",
+    "xpath": "//*[@id=\"chinaRegNo\"]"
+  },
+  "select_prodTypeCode_prodTypeCode_-- Select ": {
+    "id": "prodTypeCode",
+    "isVisible": false,
+    "name": "prodTypeCode",
+    "tag": "select",
+    "text": "-- Select --陆生动物及其遗传物质（不含禽鸟类） ",
+    "type": "select-one",
+    "value": "",
+    "xpath": "//*[@id=\"prodTypeCode\"]"
+  },
+  "select_prodCategoryCode_prodCategoryCode_--Select P": {
+    "id": "prodCategoryCode",
+    "isVisible": false,
+    "name": "prodCategoryCode",
+    "tag": "select",
+    "text": "--Select Product type first--",
+    "type": "select-one",
+    "value": "",
+    "xpath": "//*[@id=\"prodCategoryCode\"]"
+  },
+  "button___--Select P": {
+    "id": "",
+    "isVisible": true,
+    "name": "",
+    "tag": "button",
+    "text": "--Select Product type first--",
+    "type": "button",
+    "value": "",
+    "xpath": "//*[@id=\"dec_query_form\"]/table[1]/tbody[1]/tr[4]/td[4]/div[1]/div[1]/button[1]"
+  },
+  "a___--Select P": {
+    "id": "",
+    "isVisible": false,
+    "name": "",
+    "tag": "a",
+    "text": "--Select Product type first--",
+    "type": "",
+    "value": "",
+    "xpath": "//*[@id=\"dec_query_form\"]/table[1]/tbody[1]/tr[4]/td[4]/div[1]/div[1]/div[1]/ul[1]/li[1]/a[1]"
+  },
+  "input_prodName_prodName_": {
+    "id": "prodName",
+    "isVisible": true,
+    "name": "prodName",
+    "tag": "input",
+    "text": "",
+    "type": "text",
+    "value": "",
+    "xpath": "//*[@id=\"prodName\"]"
+  },
+  "select_regState_regState_--Select--": {
+    "id": "regState",
+    "isVisible": true,
+    "name": "regState",
+    "tag": "select",
+    "text": "--Select--\n                   ",
+    "type": "select-one",
+    "value": "",
+    "xpath": "//*[@id=\"regState\"]"
+  },
+  "input_corpNameEn_corpNameEn_": {
+    "id": "corpNameEn",
+    "isVisible": true,
+    "name": "corpNameEn",
+    "tag": "input",
+    "text": "",
+    "type": "text",
+    "value": "",
+    "xpath": "//*[@id=\"corpNameEn\"]"
+  },
+  "input_corpNameMo_corpNameMo_": {
+    "id": "corpNameMo",
+    "isVisible": true,
+    "name": "corpNameMo",
+    "tag": "input",
+    "text": "",
+    "type": "text",
+    "value": "",
+    "xpath": "//*[@id=\"corpNameMo\"]"
+  },
+  "button___10": {
+    "id": "",
+    "isVisible": false,
+    "name": "",
+    "tag": "button",
+    "text": "10",
+    "type": "button",
+    "value": "",
+    "xpath": "//*[@id=\"dataListDiv\"]/div[1]/div[3]/div[1]/span[2]/span[1]/button[1]"
+  },
+  "a___10": {
+    "id": "",
+    "isVisible": false,
+    "name": "",
+    "tag": "a",
+    "text": "10",
+    "type": "",
+    "value": "",
+    "xpath": "//*[@id=\"dataListDiv\"]/div[1]/div[3]/div[1]/span[2]/span[1]/ul[1]/li[1]/a[1]"
+  },
+  "a___‹": {
+    "id": "",
+    "isVisible": false,
+    "name": "",
+    "tag": "a",
+    "text": "‹",
+    "type": "",
+    "value": "",
+    "xpath": "//*[@id=\"dataListDiv\"]/div[1]/div[3]/div[2]/ul[1]/li[1]/a[1]"
+  },
+  "a___›": {
+    "id": "",
+    "isVisible": false,
+    "name": "",
+    "tag": "a",
+    "text": "›",
+    "type": "",
+    "value": "",
+    "xpath": "//*[@id=\"dataListDiv\"]/div[1]/div[3]/div[2]/ul[1]/li[2]/a[1]"
+  },
+  "input__chinaRegNo_": {
+    "id": "",
+    "isVisible": false,
+    "name": "chinaRegNo",
+    "tag": "input",
+    "text": "",
+    "type": "text",
+    "value": "",
+    "xpath": "//*[@id=\"company_form\"]/table[1]/tbody[1]/tr[1]/td[2]/input[1]"
+  },
+  "input_countryAllName__": {
+    "id": "countryAllName",
+    "isVisible": false,
+    "name": "",
+    "tag": "input",
+    "text": "",
+    "type": "text",
+    "value": "",
+    "xpath": "//*[@id=\"countryAllName\"]"
+  },
+  "select_provinceAllName_provinceCode_--Select--": {
+    "id": "provinceAllName",
+    "isVisible": false,
+    "name": "provinceCode",
+    "tag": "select",
+    "text": "--Select--",
+    "type": "select-multiple",
+    "value": "",
+    "xpath": "//*[@id=\"provinceAllName\"]"
+  },
+  "select_prodTypeAllName_prodTypeCode_--Select p": {
+    "id": "prodTypeAllName",
+    "isVisible": false,
+    "name": "prodTypeCode",
+    "tag": "select",
+    "text": "--Select product type first--",
+    "type": "select-one",
+    "value": "",
+    "xpath": "//*[@id=\"prodTypeAllName\"]"
+  },
+  "select_prodCategoryAllName_prodCategoryCode_--Select p": {
+    "id": "prodCategoryAllName",
+    "isVisible": false,
+    "name": "prodCategoryCode",
+    "tag": "select",
+    "text": "--Select product type first--",
+    "type": "select-multiple",
+    "value": "",
+    "xpath": "//*[@id=\"prodCategoryAllName\"]"
+  },
+  "select_corpTypeAllName_corpTypeCode_--Select -": {
+    "id": "corpTypeAllName",
+    "isVisible": false,
+    "name": "corpTypeCode",
+    "tag": "select",
+    "text": "--Select --",
+    "type": "select-multiple",
+    "value": "",
+    "xpath": "//*[@id=\"corpTypeAllName\"]"
+  },
+  "input__overseasOfficialRegNo_": {
+    "id": "",
+    "isVisible": false,
+    "name": "overseasOfficialRegNo",
+    "tag": "input",
+    "text": "",
+    "type": "text",
+    "value": "",
+    "xpath": "//*[@id=\"company_form\"]/table[1]/tbody[1]/tr[5]/td[4]/input[1]"
+  },
+  "input__corpNameEn_": {
+    "id": "",
+    "isVisible": false,
+    "name": "corpNameEn",
+    "tag": "input",
+    "text": "",
+    "type": "text",
+    "value": "",
+    "xpath": "//*[@id=\"company_form\"]/table[1]/tbody[1]/tr[6]/td[2]/div[1]/input[1]"
+  },
+  "input__corpNameMo_": {
+    "id": "",
+    "isVisible": false,
+    "name": "corpNameMo",
+    "tag": "input",
+    "text": "",
+    "type": "text",
+    "value": "",
+    "xpath": "//*[@id=\"company_form\"]/table[1]/tbody[1]/tr[6]/td[4]/div[1]/input[1]"
+  },
+  "input_corpAddrNameEn_corpAddrNameEn_": {
+    "id": "corpAddrNameEn",
+    "isVisible": false,
+    "name": "corpAddrNameEn",
+    "tag": "input",
+    "text": "",
+    "type": "text",
+    "value": "",
+    "xpath": "//*[@id=\"corpAddrNameEn\"]"
+  },
+  "input_corpAddrNameMo_corpAddrNameMo_": {
+    "id": "corpAddrNameMo",
+    "isVisible": false,
+    "name": "corpAddrNameMo",
+    "tag": "input",
+    "text": "",
+    "type": "text",
+    "value": "",
+    "xpath": "//*[@id=\"corpAddrNameMo\"]"
+  },
+  "select__regState_--Select--": {
+    "id": "",
+    "isVisible": false,
+    "name": "regState",
+    "tag": "select",
+    "text": "--Select--\n                   ",
+    "type": "select-one",
+    "value": "",
+    "xpath": "//*[@id=\"company_form\"]/table[1]/tbody[1]/tr[8]/td[2]/select[1]"
+  },
+  "input_corpContactName_corpContactName_": {
+    "id": "corpContactName",
+    "isVisible": false,
+    "name": "corpContactName",
+    "tag": "input",
+    "text": "",
+    "type": "text",
+    "value": "",
+    "xpath": "//*[@id=\"corpContactName\"]"
+  },
+  "input_corpContactTel_corpContactTel_": {
+    "id": "corpContactTel",
+    "isVisible": false,
+    "name": "corpContactTel",
+    "tag": "input",
+    "text": "",
+    "type": "text",
+    "value": "",
+    "xpath": "//*[@id=\"corpContactTel\"]"
+  },
+  "input_corpContactEmail_corpContactEmail_": {
+    "id": "corpContactEmail",
+    "isVisible": false,
+    "name": "corpContactEmail",
+    "tag": "input",
+    "text": "",
+    "type": "text",
+    "value": "",
+    "xpath": "//*[@id=\"corpContactEmail\"]"
+  },
+  "input__validFrom_": {
+    "id": "",
+    "isVisible": false,
+    "name": "validFrom",
+    "tag": "input",
+    "text": "",
+    "type": "text",
+    "value": "",
+    "xpath": "//*[@id=\"company_form\"]/table[1]/tbody[1]/tr[10]/td[2]/input[1]"
+  },
+  "input__validTo_": {
+    "id": "",
+    "isVisible": false,
+    "name": "validTo",
+    "tag": "input",
+    "text": "",
+    "type": "text",
+    "value": "",
+    "xpath": "//*[@id=\"company_form\"]/table[1]/tbody[1]/tr[10]/td[4]/input[1]"
+  },
+  "input__rawMaterialsSource_": {
+    "id": "",
+    "isVisible": false,
+    "name": "rawMaterialsSource",
+    "tag": "input",
+    "text": "",
+    "type": "text",
+    "value": "",
+    "xpath": "//*[@id=\"company_form\"]/table[1]/tbody[1]/tr[11]/td[2]/input[1]"
+  },
+  "button_confirmBtn__确认 Confirm": {
+    "id": "confirmBtn",
+    "isVisible": true,
+    "name": "",
+    "tag": "button",
+    "text": "确认 Confirm",
+    "type": "button",
+    "value": "",
+    "xpath": "//*[@id=\"confirmBtn\"]"
+  },
+  "a___": {
+    "id": "",
+    "isVisible": true,
+    "name": "",
+    "tag": "a",
+    "text": "",
+    "type": "",
+    "value": "",
+    "xpath": "//*[@id=\"layui-layer1\"]/span[1]/a[1]"
+  }
+}

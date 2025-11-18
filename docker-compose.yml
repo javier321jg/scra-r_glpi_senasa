@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./basededatos:/app/basededatos  # Persistencia para la base de datos SQLite
+      - ./logs:/app/logs                # Persistencia para logs
+      - ./static:/app/static            # Persistencia para archivos estáticos generados
+      - ./auth_config.json:/app/auth_config.json  # Persistencia para configuración de autenticación
+    environment:
+      - FLASK_ENV=production
+      - SECRET_KEY=${SECRET_KEY:-senasa_default_secret_key}  # Configurable por variable de entorno
+      - TZ=America/Lima  # Zona horaria para Perú
+    restart: always
+    shm_size: '2gb'  # Memoria compartida para Chrome/Selenium
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
