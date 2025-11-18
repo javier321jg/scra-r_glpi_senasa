@@ -1,16 +1,16 @@
 # SENASA Ticket Tracking System - Frontend (React + Vite)
 
-## 🚀 Descripción
+## Descripcion
 
-Este es el frontend de la aplicación SENASA de seguimiento de tickets, construido con React 18 y Vite. Se conecta a una API Headless Flask y utiliza WebSockets para actualizaciones en tiempo real.
+Este es el frontend de la aplicacion SENASA de seguimiento de tickets, construido con React 18 y Vite. Se conecta a una API Headless Flask y utiliza WebSockets para actualizaciones en tiempo real.
 
-## 📦 Requisitos
+## Requisitos
 
 - Node.js 16+
 - npm o pnpm
 - Backend Flask corriendo en `http://localhost:5000`
 
-## 🛠️ Instalación
+## Instalacion
 
 ```bash
 # Clonar/copiar el proyecto
@@ -23,16 +23,16 @@ npm install
 cp .env.example .env.local
 ```
 
-## 🏃 Desarrollo
+## Desarrollo
 
 ```bash
 # Iniciar servidor de desarrollo
 npm run dev
 
-# La aplicación estará disponible en http://localhost:3000
+# La aplicacion estara disponible en http://localhost:3000
 ```
 
-## 📦 Build para Producción
+## Build para Produccion
 
 ```bash
 # Crear build optimizado
@@ -42,18 +42,18 @@ npm run build
 npm run preview
 ```
 
-## 🏗️ Estructura del Proyecto
+## Estructura del Proyecto
 
-Ver `/FRONTEND_STRUCTURE.md` para una descripción detallada de la estructura.
+Ver `/FRONTEND_STRUCTURE.md` para una descripcion detallada de la estructura.
 
-## 🔌 Conexión con Backend
+## Conexion con Backend
 
-El frontend se conecta automáticamente al backend especificado en `VITE_API_URL`:
+El frontend se conecta automaticamente al backend especificado en `VITE_API_URL`:
 
-- **Endpoints REST:** Para datos estáticos
-- **WebSockets:** Para actualizaciones en tiempo real de tickets
+- Endpoints REST: Para datos estaticos
+- WebSockets: Para actualizaciones en tiempo real de tickets
 
-### Configuración
+### Configuracion
 
 Editar `.env.local` para cambiar:
 ```env
@@ -61,7 +61,7 @@ VITE_API_URL=http://localhost:5000
 VITE_SOCKET_URL=http://localhost:5000
 ```
 
-## 📚 Estructura de APIs
+## Estructura de APIs
 
 ### Tickets API
 ```javascript
@@ -81,7 +81,7 @@ const newTickets = await ticketsApi.getByType('nuevos');
 ```javascript
 import { techniciansApi } from './api/techniciansApi';
 
-// Obtener todos los técnicos
+// Obtener todos los tecnicos
 const techs = await techniciansApi.getAll();
 
 // Obtener ranking
@@ -92,11 +92,11 @@ const ranking = await techniciansApi.getRanking();
 ```javascript
 import { analyticsApi } from './api/analyticsApi';
 
-// Obtener pronóstico de picos
+// Obtener pronostico de picos
 const forecast = await analyticsApi.getPicos();
 ```
 
-## 🎣 Custom Hooks
+## Custom Hooks
 
 ### useTickets
 Gestiona tickets con actualizaciones en tiempo real:
@@ -105,7 +105,7 @@ const { tickets, loading, error, refetch } = useTickets();
 ```
 
 ### useTechnicians
-Gestiona técnicos y ranking:
+Gestiona tecnicos y ranking:
 ```javascript
 const { technicians, ranking, loading } = useTechnicians();
 ```
@@ -116,15 +116,15 @@ Obtiene datos de BI/Analytics:
 const { forecast, trends, metrics } = useAnalytics();
 ```
 
-## 🎨 Componentes Principales
+## Componentes Principales
 
-- **Dashboard:** Vista principal con estadísticas
-- **TicketsTable:** Tabla de tickets con filtrado
-- **TechnicianList:** Lista de técnicos con ranking
-- **ForecastChart:** Gráfico de pronóstico de picos
-- **StatCards:** Tarjetas de estadísticas
+- Dashboard: Vista principal con estadisticas
+- TicketsTable: Tabla de tickets con filtrado
+- TechnicianList: Lista de tecnicos con ranking
+- ForecastChart: Grafico de pronostico de picos
+- StatCards: Tarjetas de estadisticas
 
-## 🔄 Actualizaciones en Tiempo Real
+## Actualizaciones en Tiempo Real
 
 El frontend se suscribe a eventos WebSocket del backend:
 
@@ -140,7 +140,7 @@ webSocketService.onTicketsUpdate((data) => {
 });
 ```
 
-## 🧪 Testing
+## Testing
 
 ```bash
 # Ejecutar tests
@@ -150,7 +150,7 @@ npm run test
 npm run test:coverage
 ```
 
-## 📝 Variables de Entorno
+## Variables de Entorno
 
 ```env
 # Backend
@@ -166,10 +166,10 @@ VITE_REFETCH_INTERVAL=5000
 VITE_STATS_INTERVAL=30000
 ```
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
-### Conexión a Backend fallida
-- Verificar que el backend está corriendo en el puerto 5000
+### Conexion a Backend fallida
+- Verificar que el backend esta corriendo en el puerto 5000
 - Revisar las variables `VITE_API_URL` y `VITE_SOCKET_URL`
 
 ### WebSocket no conecta
@@ -177,27 +177,27 @@ VITE_STATS_INTERVAL=30000
 - Revisar console.log para mensajes de error
 
 ### Datos no se actualizan
-- Verificar que Redis está corriendo
+- Verificar que Redis esta corriendo
 - Revisar que `socketio.emit()` se ejecuta en el backend
 
-## 📚 Documentación Adicional
+## Documentacion Adicional
 
-- [Guía Completa de Estructura](../FRONTEND_STRUCTURE.md)
-- [Documentación de Vite](https://vitejs.dev/)
+- [Guia Completa de Estructura](../FRONTEND_STRUCTURE.md)
+- [Documentacion de Vite](https://vitejs.dev/)
 - [React Documentation](https://react.dev/)
 - [Socket.IO Client](https://socket.io/docs/v4/client-api/)
 
-## 🤝 Contribuir
+## Contribuir
 
 1. Crear feature branch: `git checkout -b feature/nueva-feature`
 2. Commit cambios: `git commit -am 'Add nueva-feature'`
 3. Push al branch: `git push origin feature/nueva-feature`
 4. Crear Pull Request
 
-## 📄 Licencia
+## Licencia
 
 MIT
 
-## ✉️ Contacto
+## Contacto
 
 Para soporte, contactar al equipo de desarrollo SENASA.
