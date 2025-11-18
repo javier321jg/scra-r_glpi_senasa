@@ -456,9 +456,6 @@ MAX_CRITICAL_FAILURES = 2
 # Ruta al geckodriver
 GECKODRIVER_PATH = os.path.join(os.getcwd(), "geckodriver.exe")  # Para Windows
 
-# [RESTO DEL CÓDIGO PERMANECE IGUAL - Clases FirefoxDriverPool, funciones, etc.]
-# Solo se agregaron los métodos para tracking diario al DataManager
-
 # Clase para gestionar pool de drivers Firefox
 class FirefoxDriverPool:
     """Gestiona instancia de Firefox para resistencia a fallos"""
@@ -612,12 +609,6 @@ class FirefoxDriverPool:
                     self.current_index = i
                     self._rotate_driver()
                     self.current_index = old_index
-
-# [RESTO DEL CÓDIGO PERMANECE EXACTAMENTE IGUAL]
-# Incluye todas las funciones existentes: kill_firefox_processes, crear_driver_firefox, 
-# verificar_driver, verificar_login_exitoso, monitor_firefox_health, ensure_valid_driver,
-# hacer_login, driver_heartbeat, obtener_tickets, background_scraping, 
-# handle_client_connect, handle_client_disconnect
 
 firefox_pool = None
 
@@ -952,7 +943,7 @@ def hacer_login(driver):
                     EC.element_to_be_clickable((By.ID, "login_password"))
                 )
                 campo_password.clear()
-                campo_password.send_keys("00000,")
+                campo_password.send_keys(",")
                 
                 # Buscar y hacer clic en el botón con espera explícita
                 login_button = WebDriverWait(driver, TIEMPO_ESPERA_ELEMENTO).until(
@@ -1009,7 +1000,7 @@ def driver_heartbeat(interval=HEARTBEAT_INTERVAL):
             time.sleep(interval)
 
 def obtener_tickets(driver, valor, max_intentos=MAX_REINTENTOS):
-    """Obtiene tickets con mejor manejo de errores"""
+    """Obtiene tickets con mejor manejo de errores - ACTUALIZADO PARA NUEVA ESTRUCTURA DE TABLA"""
     global firefox_pool
 
     # Obtener driver del pool
@@ -1091,14 +1082,15 @@ def obtener_tickets(driver, valor, max_intentos=MAX_REINTENTOS):
                     if len(celdas) < 20:
                         continue
                     
-                    # Extraer datos de manera segura
+                    # Extraer datos de manera segura - NUEVA ESTRUCTURA
                     ticket_data = {}
                     try:
-                        ticket_data["ID_interno"] = celdas[0].get_text(strip=True) if len(celdas) > 0 else ""
+                        # Columna 0: Checkbox (ignorar)
+                        # Columna 1: ID
                         ticket_data["ID"] = celdas[1].get_text(strip=True) if len(celdas) > 1 else ""
                         ticket_data["ticket_id"] = ticket_data["ID"]
                         
-                        # Extraer título con manejo especial
+                        # Columna 2: Título
                         if len(celdas) > 2:
                             titulo_celda = celdas[2]
                             enlace_titulo = titulo_celda.find('a')
@@ -1109,22 +1101,25 @@ def obtener_tickets(driver, valor, max_intentos=MAX_REINTENTOS):
                         else:
                             ticket_data["Título"] = "Sin título"
                         
-                        # Resto de campos
+                        # MAPEO ACTUALIZADO SEGÚN NUEVA ESTRUCTURA HTML
                         ticket_data["Entidad"] = celdas[3].text.strip() if len(celdas) > 3 else ""
                         ticket_data["Estado"] = celdas[4].text.strip() if len(celdas) > 4 else ""
                         ticket_data["Fecha_apertura"] = celdas[5].text.strip() if len(celdas) > 5 else ""
-                        ticket_data["Ultima_modificacion"] = celdas[6].text.strip() if len(celdas) > 6 else ""
-                        ticket_data["Tiempo_resolucion"] = celdas[7].text.strip() if len(celdas) > 7 else ""
-                        ticket_data["Duracion"] = celdas[8].text.strip() if len(celdas) > 8 else ""
-                        ticket_data["Delay"] = celdas[9].text.strip() if len(celdas) > 9 else ""
-                        ticket_data["Solicitante"] = celdas[10].text.strip() if len(celdas) > 10 else ""
-                        ticket_data["Asignado_a"] = celdas[11].text.strip() if len(celdas) > 11 else ""
-                        ticket_data["Categoria"] = celdas[13].text.strip() if len(celdas) > 13 else ""
-                        ticket_data["Tiempo_adicional"] = celdas[15].text.strip() if len(celdas) > 15 else ""
-                        ticket_data["Tipo"] = celdas[16].text.strip() if len(celdas) > 16 else ""
-                        ticket_data["Medio"] = celdas[17].text.strip() if len(celdas) > 17 else ""
-                        ticket_data["Prioridad"] = celdas[18].text.strip() if len(celdas) > 18 else ""
-                        ticket_data["Ubicacion"] = celdas[19].text.strip() if len(celdas) > 19 else ""
+                        ticket_data["Tiempo_resolucion"] = celdas[6].text.strip() if len(celdas) > 6 else ""
+                        ticket_data["Duracion"] = celdas[7].text.strip() if len(celdas) > 7 else ""
+                        ticket_data["Delay"] = celdas[8].text.strip() if len(celdas) > 8 else ""
+                        ticket_data["Solicitante"] = celdas[9].text.strip() if len(celdas) > 9 else ""
+                        ticket_data["Asignado_a"] = celdas[10].text.strip() if len(celdas) > 10 else ""  # ← CORREGIDO: Índice 10
+                        ticket_data["Grupo_tecnico"] = celdas[11].text.strip() if len(celdas) > 11 else ""
+                        ticket_data["Categoria"] = celdas[12].text.strip() if len(celdas) > 12 else ""
+                        ticket_data["Soluciones"] = celdas[13].text.strip() if len(celdas) > 13 else ""
+                        ticket_data["Tiempo_cierre"] = celdas[14].text.strip() if len(celdas) > 14 else ""
+                        ticket_data["Tipo"] = celdas[15].text.strip() if len(celdas) > 15 else ""
+                        ticket_data["Medio"] = celdas[16].text.strip() if len(celdas) > 16 else ""
+                        ticket_data["Prioridad"] = celdas[17].text.strip() if len(celdas) > 17 else ""
+                        ticket_data["Ubicacion"] = celdas[18].text.strip() if len(celdas) > 18 else ""
+                        ticket_data["Tiempo_adicional"] = celdas[19].text.strip() if len(celdas) > 19 else ""
+                        ticket_data["Ultima_modificacion"] = celdas[20].text.strip() if len(celdas) > 20 else ""
                         
                         tickets.append(ticket_data)
                     except Exception as e:
