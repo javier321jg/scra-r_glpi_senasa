@@ -1,0 +1,36 @@
+{
+  "name": "senasa-tickets-frontend",
+  "version": "2.0.0",
+  "description": "Frontend React/Vite para SENASA Ticket Tracking System",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint src --ext js,jsx",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "axios": "^1.6.0",
+    "socket.io-client": "^4.7.0",
+    "react-router-dom": "^6.20.0",
+    "zustand": "^4.4.0",
+    "date-fns": "^2.30.0",
+    "recharts": "^2.10.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.0.0",
+    "tailwind-merge": "^2.2.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.2.0",
+    "vite": "^5.0.0",
+    "tailwindcss": "^3.3.0",
+    "postcss": "^8.4.0",
+    "autoprefixer": "^10.4.0",
+    "@shadcn/ui": "latest",
+    "eslint": "^8.54.0",
+    "vitest": "^1.0.0"
+  }
+}

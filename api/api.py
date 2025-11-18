@@ -20,6 +20,10 @@ from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, WebDriverException, NoSuchElementException, InvalidSessionIdException
 import random
+from dotenv import load_dotenv
+
+# Cargar variables de entorno
+load_dotenv()
 
 # Configurar logging
 logging.basicConfig(
@@ -44,9 +48,16 @@ except ImportError:
 # Importar las funciones de SQLite
 from db_sqlite import init_db, guardar_tickets_en_db, get_tickets_from_db
 
-# Configurar cliente Redis
+# Configurar cliente Redis con variables de entorno
 try:
-    redis_client = redis.Redis(host='localhost', port=6379, db=0)
+    redis_client = redis.Redis(
+        host=os.getenv('REDIS_HOST', 'localhost'),
+        port=int(os.getenv('REDIS_PORT', 6379)),
+        db=int(os.getenv('REDIS_DB', 0)),
+        password=os.getenv('REDIS_PASSWORD', None) or None,
+        socket_timeout=5,
+        socket_connect_timeout=5
+    )
     # Verificar conexión
     redis_client.ping()
     REDIS_AVAILABLE = True

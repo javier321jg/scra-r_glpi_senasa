@@ -262,6 +262,119 @@ def search_tecnicos(query, area=None):
         tecnicos_logger.error(f"Error al buscar técnicos: {str(e)}")
         return []
 
+def get_tecnicos_ranking_bi():
+    """
+    Obtiene ranking de rendimiento de técnicos con métricas de BI.
+
+    Calcula para cada técnico:
+    - Número de tickets activos (en_curso)
+    - TTR (Tiempo Promedio de Resolución)
+    - Tickets asignados en las últimas 24 horas
+    - Rendimiento promedio (basado en resolución rápida)
+
+    Returns:
+        list: Lista de técnicos ordenados por rendimiento (descendente)
+    """
+    try:
+        from db_sqlite import get_tickets_from_db
+
+        tecnicos_logger.info("Generando ranking de rendimiento de técnicos...")
+
+        # Obtener todos los técnicos
+        all_tecnicos = get_all_tecnicos()
+
+        if not all_tecnicos:
+            return []
+
+        ranking_data = []
+
+        for tecnico in all_tecnicos:
+            nombre_tecnico = tecnico['nombre']
+
+            # Contar tickets activos (en curso)
+            tickets_en_curso = get_tickets_from_db('curso')
+            active_tickets = [t for t in tickets_en_curso
+                            if t.get('Asignado_a') == nombre_tecnico or
+                               t.get('asignado_a') == nombre_tecnico]
+            active_count = len(active_tickets)
+
+            # Contar tickets asignados hoy (últimas 24 horas)
+            from datetime import datetime, timedelta
+            today_start = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
+
+            # Obtener tickets resueltos para calcular TTR
+            resolved_tickets = get_tickets_from_db('resueltos')
+            tech_resolved = [t for t in resolved_tickets
+                           if t.get('Asignado_a') == nombre_tecnico or
+                              t.get('asignado_a') == nombre_tecnico]
+            resolved_count = len(tech_resolved)
+
+            # Calcular TTR (simplificado: promedio de días para resolver)
+            ttr_days = 0.0
+            if tech_resolved and resolved_count > 0:
+                ttr_values = []
+                for ticket in tech_resolved:
+                    # Intentar calcular días entre fechas si existen
+                    try:
+                        fecha_apertura = ticket.get('Fecha_apertura') or ticket.get('fecha_apertura')
+                        fecha_resolucion = ticket.get('Fecha_resolucion') or ticket.get('fecha_resolucion')
+
+                        if fecha_apertura and fecha_resolucion:
+                            f_apertura = datetime.strptime(str(fecha_apertura), "%Y-%m-%d %H:%M:%S" if ' ' in str(fecha_apertura) else "%Y-%m-%d")
+                            f_resolucion = datetime.strptime(str(fecha_resolucion), "%Y-%m-%d %H:%M:%S" if ' ' in str(fecha_resolucion) else "%Y-%m-%d")
+                            days = (f_resolucion - f_apertura).days
+                            ttr_values.append(max(0.1, days))  # Mínimo 0.1 días
+                    except:
+                        pass
+
+                if ttr_values:
+                    ttr_days = sum(ttr_values) / len(ttr_values)
+
+            # Calcular puntuación de rendimiento
+            # Basado en: tickets resueltos, TTR bajo, y actividad actual
+            performance_score = 0.0
+
+            if resolved_count > 0:
+                performance_score += min(50, resolved_count)  # Máx 50 puntos por resoluciones
+
+            if ttr_days > 0:
+                # Puntuación inversa: TTR bajo = más puntos
+                ttr_score = max(0, 25 - (ttr_days * 2.5))  # Máx 25 puntos
+                performance_score += ttr_score
+
+            # Penalizar por muchos tickets activos (saturación)
+            if active_count > 0:
+                activity_score = max(0, 25 - active_count)
+                performance_score += activity_score
+
+            ranking_data.append({
+                "nombre": nombre_tecnico,
+                "area": tecnico.get('area', 'sistemas'),
+                "cargo": tecnico.get('cargo', 'Técnico'),
+                "email": tecnico.get('email', ''),
+                "tickets_activos": active_count,
+                "tickets_resueltos": resolved_count,
+                "ttr_promedio_dias": round(ttr_days, 2),
+                "performance_score": round(performance_score, 2),
+                "estado": tecnico.get('estado', 'disponible')
+            })
+
+        # Ordenar por performance_score descendente
+        ranking_data.sort(key=lambda x: x['performance_score'], reverse=True)
+
+        # Añadir ranking (posición)
+        for idx, tecnico in enumerate(ranking_data, 1):
+            tecnico['ranking'] = idx
+
+        tecnicos_logger.info(f"Ranking generado con {len(ranking_data)} técnicos")
+        return ranking_data
+
+    except Exception as e:
+        tecnicos_logger.error(f"Error al generar ranking de técnicos: {str(e)}")
+        import traceback
+        tecnicos_logger.error(traceback.format_exc())
+        return []
+
 # Si se ejecuta directamente, inicializar la BD y poblar con técnicos
 if __name__ == "__main__":
     # Configurar el logging básico

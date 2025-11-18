@@ -6,6 +6,12 @@ monkey.patch_all()
 
 sys.setrecursionlimit(5000)
 
+# ===================================
+# CARGAR VARIABLES DE ENTORNO
+# ===================================
+from dotenv import load_dotenv
+load_dotenv()
+
 # Configurar logging
 logging.basicConfig(
     level=logging.INFO,
@@ -112,9 +118,10 @@ def redis_listener():
 try:
     import redis
     redis_client = redis.Redis(
-        host='localhost', 
-        port=6379, 
-        db=0,
+        host=os.getenv('REDIS_HOST', 'localhost'),
+        port=int(os.getenv('REDIS_PORT', 6379)),
+        db=int(os.getenv('REDIS_DB', 0)),
+        password=os.getenv('REDIS_PASSWORD', None) or None,
         socket_timeout=5,  # Timeout para operaciones de socket
         socket_connect_timeout=5,  # Timeout para conexión
         health_check_interval=30  # Verificar conexión cada 30 segundos
@@ -178,8 +185,8 @@ app = Flask(__name__,
             static_folder='static')
 CORS(app)
 
-# Añadir clave secreta para sesiones
-app.secret_key = 'senasa_sistema_tickets_2025'  # Cambia esto por una clave segura en producción
+# Añadir clave secreta para sesiones desde variables de entorno
+app.secret_key = os.getenv('FLASK_SECRET_KEY', 'senasa_sistema_tickets_2025_default_change_me')
 
 socketio = SocketIO(app,
                     cors_allowed_origins="*",
@@ -257,18 +264,31 @@ def login_required(f):
 
 @app.route('/')
 def index():
-    template_path = os.path.join(app.template_folder, 'index.html')
-    if not os.path.exists(template_path):
-        logger.error(f"Template index.html no encontrado en {template_path}")
-    return render_template('index.html')
+    """Endpoint headless que devuelve información de la API"""
+    return jsonify({
+        "api": "SENASA Ticket Tracking System - Headless API",
+        "version": "2.0",
+        "endpoints": {
+            "tickets": "/api/tickets",
+            "tickets_improved": "/api/tickets/improved",
+            "tickets_stats": "/api/tickets/stats",
+            "technicians": "/api/tecnicos",
+            "analytics_picos": "/api/analytics/picos",
+            "technicians_ranking": "/api/tecnicos/ranking",
+            "redis_status": "/api/system/redis-status"
+        },
+        "frontend": "React/Vite SPA (served separately)",
+        "timestamp": datetime.now().isoformat()
+    })
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
     if request.method == 'POST':
         password = request.form.get('password')
-        # Configura aquí tu contraseña de administrador (usa hashing en producción)
-        if password == 'admin123':  # Cambia esto por una contraseña segura
+        # Verificar contraseña contra variables de entorno
+        admin_password = os.getenv('ADMIN_PASSWORD', 'admin123')
+        if password == admin_password:
             session['logged_in'] = True
             next_page = request.args.get('next')
             if next_page and next_page.startswith('/'):
@@ -276,7 +296,7 @@ def login():
             return redirect(url_for('index'))
         else:
             error = 'Contraseña incorrecta. Por favor, intente nuevamente.'
-    
+
     return render_template('login.html', error=error, now=datetime.now())
 
 @app.route('/logout')
@@ -288,10 +308,17 @@ def logout():
 @app.route('/estadisticas')
 @login_required
 def estadisticas():
-    template_path = os.path.join(app.template_folder, 'estadisticas.html')
-    if not os.path.exists(template_path):
-        logger.error(f"Template estadisticas.html no encontrado en {template_path}")
-    return render_template('estadisticas.html')
+    """Endpoint para estadísticas - retorna JSON con datos agregados"""
+    try:
+        stats = get_stats_from_db()
+        return jsonify({
+            "stats": stats,
+            "last_update": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "message": "Use /api/tickets/stats para obtener estadísticas en tiempo real"
+        })
+    except Exception as e:
+        logger.error(f"Error al obtener estadísticas: {str(e)}")
+        return jsonify({"error": "Error al obtener estadísticas"}), 500
 
 @app.route('/gif/<path:filename>')
 def serve_gif(filename):
@@ -432,9 +459,9 @@ def send_email():
                 logger.error(f"Campo requerido faltante: {field}")
                 return jsonify({'error': f'Campo requerido: {field}'}), 400
 
-        EMAIL_USER = 'PRACTICANTE_INF_001@senasa.gob.pe'
-        EMAIL_PASSWORD = '-------'  # Asegúrate de que esta sea la contraseña correcta
-        EMAIL_SERVER = 'mail.senasa.gob.pe'
+        EMAIL_USER = os.getenv('SMTP_USER', 'PRACTICANTE_INF_001@senasa.gob.pe')
+        EMAIL_PASSWORD = os.getenv('SMTP_PASSWORD', '')
+        EMAIL_SERVER = os.getenv('SMTP_SERVER', 'mail.senasa.gob.pe')
 
         try:
             # Configurar credenciales
@@ -702,8 +729,18 @@ def capture_dashboard_screenshot():
 @app.route('/estadisticas_en_curso')
 @login_required
 def estadisticas_en_curso():
-    logger.info("Acceso a página de estadísticas en curso")
-    return render_template('estadisticas_en_curso.html')
+    """Endpoint para obtener tickets en curso - retorna JSON"""
+    logger.info("Acceso a estadísticas en curso")
+    try:
+        tickets_en_curso = get_tickets_from_db('curso')
+        return jsonify({
+            "tickets": tickets_en_curso,
+            "total": len(tickets_en_curso),
+            "last_update": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        })
+    except Exception as e:
+        logger.error(f"Error al obtener tickets en curso: {str(e)}")
+        return jsonify({"error": "Error al obtener tickets en curso"}), 500
 
 @app.route('/email_tickets_report')
 @login_required
@@ -743,6 +780,7 @@ def page_not_found(e):
 def estadisticas_filtradas(filtro):
     """
     Obtiene estadísticas filtradas por tipo de ticket (en_espera, en_curso, nuevos, resueltos)
+    Retorna JSON en lugar de HTML
     """
     # Mapear el filtro al nombre de categoría en la base de datos
     if filtro == 'en_espera':
@@ -755,21 +793,25 @@ def estadisticas_filtradas(filtro):
         db_filtro = 'resueltos'
     else:
         db_filtro = None
-    
+
     # Obtener tickets de la base de datos según el filtro
-    if db_filtro:
-        tickets = get_tickets_from_db(db_filtro)
-    else:
-        # Si no hay filtro específico, obtener todos los tickets (limitado a 1000)
-        tickets = get_tickets_from_db(limit=1000)
-    
-    logger.info(f"Acceso a estadísticas filtradas: {filtro} - {len(tickets)} tickets")
-    return render_template(
-        'estadisticas_filtradas.html',
-        tickets=tickets,
-        filtro=filtro,
-        last_update=tickets_cache.get('last_update', 'Desconocida')
-    )
+    try:
+        if db_filtro:
+            tickets = get_tickets_from_db(db_filtro)
+        else:
+            # Si no hay filtro específico, obtener todos los tickets (limitado a 1000)
+            tickets = get_tickets_from_db(limit=1000)
+
+        logger.info(f"Acceso a estadísticas filtradas: {filtro} - {len(tickets)} tickets")
+        return jsonify({
+            "tickets": tickets,
+            "filtro": filtro,
+            "total": len(tickets),
+            "last_update": tickets_cache.get('last_update', datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        })
+    except Exception as e:
+        logger.error(f"Error al obtener estadísticas filtradas: {str(e)}")
+        return jsonify({"error": "Error al obtener estadísticas filtradas"}), 500
 
 ################################
 # RUTAS PARA GESTIÓN DE TÉCNICOS
@@ -778,9 +820,19 @@ def estadisticas_filtradas(filtro):
 @app.route('/tecnicos')
 @login_required
 def tecnicos_view():
-    """Vista principal de técnicos"""
-    logger.info("Accediendo a la vista de técnicos")
-    return render_template('tecnicos.html')
+    """Endpoint para técnicos - retorna información de la API de técnicos"""
+    logger.info("Accediendo a información de técnicos")
+    return jsonify({
+        "message": "Use /api/tecnicos para obtener la lista de técnicos",
+        "endpoints": {
+            "get_all_technicians": "/api/tecnicos?q=&area=all",
+            "search_by_area": "/api/tecnicos?area=redes",
+            "search_by_name": "/api/tecnicos?q=carlos",
+            "get_ranking": "/api/tecnicos/ranking",
+            "refresh_from_tickets": "POST /api/tecnicos/refresh"
+        },
+        "timestamp": datetime.now().isoformat()
+    })
 
 @app.route('/api/tecnicos', methods=['GET'])
 def get_tecnicos():
@@ -878,6 +930,65 @@ def get_tecnico_info(nombre):
         logger.error(f"Error al obtener técnico: {str(e)}")
         return jsonify({
             "error": "Error al obtener técnico",
+            "details": str(e)
+        }), 500
+
+################################
+# ENDPOINTS DE INTELIGENCIA DE NEGOCIO (BI)
+################################
+
+@app.route('/api/analytics/picos', methods=['GET'])
+def get_analytics_picos():
+    """Endpoint para obtener predicción de picos de tickets"""
+    try:
+        # Importar módulo de analytics cuando sea necesario
+        from analytics import get_picos_forecast
+
+        forecast_data = get_picos_forecast()
+        return jsonify({
+            "forecast": forecast_data,
+            "timestamp": datetime.now().isoformat(),
+            "source": "analytics_module"
+        })
+    except ImportError:
+        logger.warning("Módulo analytics.py no disponible aún")
+        return jsonify({
+            "message": "Módulo de analytics en desarrollo",
+            "forecast": None,
+            "timestamp": datetime.now().isoformat()
+        }), 202
+    except Exception as e:
+        logger.error(f"Error al obtener pronóstico de picos: {str(e)}")
+        return jsonify({
+            "error": "Error al obtener pronóstico de picos",
+            "details": str(e)
+        }), 500
+
+@app.route('/api/tecnicos/ranking', methods=['GET'])
+def get_tecnicos_ranking():
+    """Endpoint para obtener ranking de rendimiento de técnicos"""
+    try:
+        # Importar función de ranking cuando sea necesario
+        from db_tecnicos import get_tecnicos_ranking_bi
+
+        ranking_data = get_tecnicos_ranking_bi()
+        return jsonify({
+            "ranking": ranking_data,
+            "total": len(ranking_data),
+            "timestamp": datetime.now().isoformat()
+        })
+    except ImportError:
+        logger.warning("Función get_tecnicos_ranking_bi no disponible aún")
+        return jsonify({
+            "message": "Función de ranking en desarrollo",
+            "ranking": [],
+            "total": 0,
+            "timestamp": datetime.now().isoformat()
+        }), 202
+    except Exception as e:
+        logger.error(f"Error al obtener ranking de técnicos: {str(e)}")
+        return jsonify({
+            "error": "Error al obtener ranking de técnicos",
             "details": str(e)
         }), 500
 

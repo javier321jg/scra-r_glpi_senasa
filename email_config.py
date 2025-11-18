@@ -11,6 +11,10 @@ from email.mime.application import MIMEApplication
 from datetime import datetime
 from flask import jsonify, request, render_template
 import threading
+from dotenv import load_dotenv
+
+# Cargar variables de entorno
+load_dotenv()
 
 # Configurar logging
 logger = logging.getLogger(__name__)
@@ -19,20 +23,20 @@ logger = logging.getLogger(__name__)
 CONFIG_FILE = 'email_config.json'
 HISTORY_FILE = 'email_history.json'
 
-# Configuración predeterminada
+# Configuración predeterminada desde variables de entorno
 DEFAULT_CONFIG = {
-    'server': 'mail.senasa.gob.pe',
-    'port': 587,
-    'user': 'PRACTICANTE_INF_001@senasa.gob.pe',
-    'password': '-----',
-    'to': 'dar321ser@gmail.com',
-    'cc': '',
-    'subject': 'Reporte de Tickets - SENASA',
-    'message': 'Adjunto encontrará el reporte diario de tickets en curso.',
-    'enableSchedule': True,
+    'server': os.getenv('SMTP_SERVER', 'mail.senasa.gob.pe'),
+    'port': int(os.getenv('SMTP_PORT', 587)),
+    'user': os.getenv('SMTP_USER', 'PRACTICANTE_INF_001@senasa.gob.pe'),
+    'password': os.getenv('SMTP_PASSWORD', ''),
+    'to': os.getenv('EMAIL_TO', 'dar321ser@gmail.com'),
+    'cc': os.getenv('EMAIL_CC', ''),
+    'subject': os.getenv('EMAIL_SUBJECT', 'Reporte de Tickets - SENASA'),
+    'message': os.getenv('EMAIL_MESSAGE', 'Adjunto encontrará el reporte diario de tickets en curso.'),
+    'enableSchedule': os.getenv('ENABLE_SCHEDULE', 'True').lower() == 'true',
     'scheduleTime': '08:00',  # Mantener para compatibilidad con versiones anteriores
-    'scheduleTimes': ['16:00', '08:00'],  # Nuevo campo para múltiples horarios
-    'includeWeekends': True
+    'scheduleTimes': [t.strip() for t in os.getenv('SCHEDULE_TIMES', '08:00,16:00').split(',')],
+    'includeWeekends': os.getenv('INCLUDE_WEEKENDS', 'True').lower() == 'true'
 }
 
 # Variable global para la tarea programada
@@ -562,15 +566,60 @@ def send_html_report(config, tickets_en_curso=None, is_test=False):
         if tickets_en_curso is None:
             # Obtener tickets de la tabla tickets_curso SIN filtrado adicional
             tickets_en_curso = get_tickets_from_db('curso')
-            
+
         logger.info(f"Procesando reporte HTML con {len(tickets_en_curso)} tickets en curso")
-        
+
         # Obtener la fecha actual
         fecha_actual = datetime.now().strftime('%d/%m/%Y')
         hora_actual = datetime.now().strftime('%H:%M')
-        
+
         # Preparar datos para la plantilla de correo
         template_data = process_tickets_for_template(tickets_en_curso, fecha_actual, hora_actual)
+
+        # ===================================
+        # INTEGRACIÓN DE INTELIGENCIA DE NEGOCIO (BI)
+        # ===================================
+        try:
+            from analytics import get_picos_forecast
+            from db_tecnicos import get_tecnicos_ranking_bi
+
+            logger.info("Integrando datos de BI en el reporte...")
+
+            # Obtener pronóstico de picos
+            try:
+                forecast_data = get_picos_forecast()
+                if forecast_data.get('status') == 'success':
+                    template_data['forecast'] = forecast_data.get('forecast', [])
+                    template_data['forecast_summary'] = forecast_data.get('summary', {})
+                    logger.info("Pronóstico de picos incluido en el reporte")
+                else:
+                    logger.warning(f"Pronóstico no disponible: {forecast_data.get('message')}")
+                    template_data['forecast'] = []
+            except Exception as forecast_err:
+                logger.warning(f"Error al obtener pronóstico: {str(forecast_err)}")
+                template_data['forecast'] = []
+
+            # Obtener ranking de técnicos
+            try:
+                ranking_data = get_tecnicos_ranking_bi()
+                if ranking_data:
+                    template_data['technician_ranking'] = ranking_data[:5]  # Top 5 técnicos
+                    logger.info(f"Ranking de {len(ranking_data)} técnicos incluido en el reporte")
+                else:
+                    logger.warning("No hay datos de ranking disponibles")
+                    template_data['technician_ranking'] = []
+            except Exception as ranking_err:
+                logger.warning(f"Error al obtener ranking: {str(ranking_err)}")
+                template_data['technician_ranking'] = []
+
+        except ImportError:
+            logger.warning("Módulos de BI (analytics, db_tecnicos) no disponibles para el reporte")
+            template_data['forecast'] = []
+            template_data['technician_ranking'] = []
+
+        # ===================================
+        # FIN INTEGRACIÓN DE BI
+        # ===================================
         
         # Crear mensaje (importante usar 'alternative' para contenido HTML)
         msg = MIMEMultipart('alternative')
